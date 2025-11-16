@@ -1923,6 +1923,53 @@ body {
     margin-bottom: 0;
 }
 
+.modal-links {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.modal-links h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 1.125rem;
+}
+
+.modal-links h4 i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.link-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background 0.2s ease;
+    border: 1px solid var(--border);
+}
+
+.link-item:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.link-item i {
+    color: var(--primary);
+    font-size: 0.875rem;
+}
+
 .modal-footer {
     padding: 1.5rem 2rem;
     border-top: 1px solid var(--border);
@@ -1933,6 +1980,44 @@ body {
 
 .modal-ok-btn {
     min-width: 120px;
+}
+
+.links-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.link-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: background 0.2s ease;
+    border: 1px solid var(--border);
+}
+
+.link-preview:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.link-preview i {
+    color: var(--primary);
+    font-size: 0.7rem;
+}
+
+.more-links {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 0.25rem 0.5rem;
 }
 
 /* Password toggle button styles */
@@ -2511,316 +2596,6 @@ body {
     .btn:active {
         transform: scale(0.98);
     }
-    /* === СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОН И ТАЧ-УСТРОЙСТВ === */
-
-/* Стили для модального окна */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    padding: 1rem;
-    backdrop-filter: blur(5px);
-}
-
-.modal-overlay.show {
-    opacity: 1;
-}
-
-.modal-content {
-    background: var(--bg-primary);
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 600px;
-    width: 100%;
-    max-height: 90vh;
-    overflow: hidden;
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
-    border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-}
-
-.modal-overlay.show .modal-content {
-    transform: scale(1);
-}
-
-.modal-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    position: relative;
-}
-
-.modal-title {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-.modal-close {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.25rem;
-    transition: background 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.modal-close:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.modal-body {
-    padding: 2rem;
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.modal-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.modal-date {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-.modal-date i {
-    color: var(--primary);
-}
-
-.modal-image {
-    margin-bottom: 1.5rem;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.modal-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.modal-text {
-    line-height: 1.7;
-    color: var(--text-primary);
-    font-size: 1rem;
-}
-
-.modal-text p {
-    margin-bottom: 1rem;
-}
-
-.modal-text p:last-child {
-    margin-bottom: 0;
-}
-
-.modal-links {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-}
-
-.modal-links h4 {
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-    font-size: 1.125rem;
-}
-
-.modal-links h4 i {
-    color: var(--primary);
-    margin-right: 0.5rem;
-}
-
-.links-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.link-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: background 0.2s ease;
-    border: 1px solid var(--border);
-}
-
-.link-item:hover {
-    background: var(--primary-light);
-    color: var(--primary);
-    text-decoration: none;
-}
-
-.link-item i {
-    color: var(--primary);
-    font-size: 0.875rem;
-}
-
-.modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 1px solid var(--border);
-    background: var(--bg-secondary);
-    display: flex;
-    justify-content: flex-end;
-}
-
-.modal-ok-btn {
-    min-width: 120px;
-}
-
-.links-preview {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.link-preview {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: var(--bg-secondary);
-    border-radius: 6px;
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 0.75rem;
-    transition: background 0.2s ease;
-    border: 1px solid var(--border);
-}
-
-.link-preview:hover {
-    background: var(--primary-light);
-    color: var(--primary);
-    text-decoration: none;
-}
-
-.link-preview i {
-    color: var(--primary);
-    font-size: 0.7rem;
-}
-
-.more-links {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    font-style: italic;
-    padding: 0.25rem 0.5rem;
-}
-
-/* Улучшения для мобильных устройств */
-@media (max-width: 768px) {
-    .modal-content {
-        margin: 1rem;
-        max-height: 85vh;
-    }
-
-    .modal-header {
-        padding: 1.25rem 1.5rem;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-    }
-
-    .modal-footer {
-        padding: 1.25rem 1.5rem;
-    }
-
-    .modal-title {
-        font-size: 1.25rem;
-    }
-    
-    .modal-close {
-        width: 40px;
-        height: 40px;
-        top: 1rem;
-        right: 1rem;
-    }
-}
-
-/* Улучшения для тач-устройств - минимальные размеры кнопок */
-@media (hover: none) and (pointer: coarse) {
-    .modal-close {
-        min-width: 44px;
-        min-height: 44px;
-    }
-    
-    .modal-ok-btn {
-        min-width: 120px;
-        min-height: 44px;
-    }
-    
-    .link-item, .link-preview {
-        min-height: 44px;
-    }
-    
-    /* Дополнительные улучшения для тач-устройств */
-    .btn, button {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    .menu-item {
-        min-height: 44px;
-        padding: 12px 16px;
-    }
-    
-    .filter-btn {
-        min-height: 44px;
-        padding: 12px 20px;
-    }
-    
-    .calendar-day {
-        min-width: 44px;
-        min-height: 44px;
-    }
-    
-    input, select, textarea {
-        font-size: 16px; /* Предотвращает масштабирование на iOS */
-    }
-}
-
-/* Дополнительные улучшения доступности для тач-устройств */
-@media (max-width: 1024px) {
-    .btn, button {
-        padding: 12px 20px;
-    }
-}
     
     .card {
         padding: 1.25rem;
@@ -2845,16 +2620,8 @@ body {
         padding: 1rem;
     }
 }
-/* Исправления для мобильной навигации и админ-панели */
-.sidebar.mobile {
-    transform: translateX(-100%);
-}
 
-.sidebar.mobile.active {
-    transform: translateX(0);
-}
-
-/* Исправление кнопки разворачивания сайдбара */
+/* Fix for sidebar toggle button visibility */
 .sidebar-toggle {
     z-index: 101;
     background: var(--bg-tertiary);
@@ -2864,270 +2631,87 @@ body {
     background: var(--primary-light);
 }
 
-/* Улучшенные стили для админ-панели */
-.admin-panel-content {
-    background: var(--bg-card);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-top: 1rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
+/* Fix for mobile menu */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .mobile-menu-overlay.active {
+        display: block;
     }
 }
 
-/* Стили для ссылок в формах */
-.links-container {
-    margin: 1rem 0;
+/* Ensure admin buttons are visible */
+.admin-only {
+    display: block !important;
 }
 
-.link-field {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    align-items: flex-end;
+[data-user-role="user"] .admin-only {
+    display: none !important;
 }
 
-.link-field .form-input {
-    flex: 1;
-    min-width: 120px;
+/* Fix for form elements in admin panels */
+.admin-panel-content .form-input {
+    background: var(--bg-primary);
+    border: 2px solid var(--border);
 }
 
-/* Календарь */
+.admin-panel-content .form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Fix for calendar positioning */
 .calendar-container {
     position: relative;
-}
-
-.calendar-input {
-    cursor: pointer;
-    background: var(--bg-primary);
 }
 
 .calendar-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-xl);
     z-index: 1000;
-    padding: 1rem;
-    min-width: 300px;
-    margin-top: 0.5rem;
-    display: none;
 }
 
-.calendar-dropdown.show {
-    display: block;
-    animation: slideDown 0.2s ease;
+/* Ensure all interactive elements have proper touch targets */
+button, 
+.btn, 
+.menu-item, 
+.filter-btn, 
+.calendar-day, 
+.header-btn,
+.mobile-control-btn,
+.link-btn {
+    min-height: 44px;
+    min-width: 44px;
 }
 
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.calendar-nav {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: var(--radius);
-    transition: var(--transition);
-}
-
-.calendar-nav:hover {
-    background: var(--bg-tertiary);
-}
-
-.calendar-title {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.25rem;
-}
-
-.calendar-weekday {
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    padding: 0.5rem 0;
-}
-
-.calendar-day {
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    border-radius: var(--radius);
-    transition: var(--transition);
-    font-size: 0.875rem;
-    color: var(--text-primary);
-}
-
-.calendar-day:hover {
-    background: var(--primary-light);
-    color: var(--primary);
-}
-
-.calendar-day.selected {
-    background: var(--primary);
-    color: white;
-}
-
-.calendar-day.other-month {
-    color: var(--text-tertiary);
-}
-
-.calendar-day.today {
-    border: 2px solid var(--primary);
-}
-
-.calendar-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-    gap: 0.5rem;
-}
-
-/* Улучшенные стили для мобильного меню */
-.mobile-menu-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 95;
-    backdrop-filter: blur(5px);
-}
-
-.mobile-menu-overlay.active {
-    display: block;
-}
-
-/* Исправление отображения админ-кнопок */
-.admin-only {
-    display: none;
-}
-
-[data-user-role="admin"] .admin-only {
-    display: block !important;
-}
-
-/* Улучшенные стили для форм загрузки файлов */
-.file-upload-area {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    text-align: center;
-    transition: var(--transition);
-    cursor: pointer;
-    margin-bottom: 1rem;
-}
-
-.file-upload-area:hover {
-    border-color: var(--primary);
-    background: var(--primary-light);
-}
-
-.file-upload-area input[type="file"] {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-}
-
-.file-preview-container {
-    margin-top: 1rem;
-}
-
-.file-preview {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: var(--radius);
-    display: none;
-}
-
-.file-preview.show {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-.banner-preview {
-    max-width: 150px;
-    max-height: 200px;
-    border-radius: var(--radius);
-    display: none;
-}
-
+/* Fix for file upload previews */
+.file-preview.show,
 .banner-preview.show {
     display: block;
-    animation: fadeIn 0.3s ease;
+    max-width: 100%;
+    height: auto;
 }
 
-/* Анимации */
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Ensure proper z-index for overlays */
+.mobile-menu-overlay {
+    z-index: 95;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.sidebar {
+    z-index: 100;
 }
 
-/* Улучшения для очень маленьких экранов */
-@media (max-width: 480px) {
-    .sidebar {
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .link-field {
-        flex-direction: column;
-    }
-    
-    .calendar-dropdown {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        max-width: 320px;
-    }
+.modal-overlay {
+    z-index: 10000;
 }
 
-
-
-
-
-
-
+.notification {
+    z-index: 1000;
+}

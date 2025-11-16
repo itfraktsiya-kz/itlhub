@@ -2864,8 +2864,6 @@ window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
 console.log('Application initialized successfully!');
-
-        }
-    }
 document.head.appendChild(modalStyles);
+
 

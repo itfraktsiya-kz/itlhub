@@ -9,7 +9,7 @@ class AuthSystem {
     init() {
         this.checkAuthState();
         this.setupEventListeners();
-        console.log(' Auth system initialized');
+        console.log('Auth system initialized');
     }
 
     setupEventListeners() {

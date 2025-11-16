@@ -273,7 +273,7 @@ class AuthSystem {
             {
                 login: 'miras',
                 password: 'miras09',
-                fullName: 'Бекишов Мирас',
+                fullName: 'Бекишев Мирас',
                 role: 'Admin',
                 class: ''
             },
@@ -486,5 +486,6 @@ window.initializeMainApp = function() {
     
     console.log('Main application initialized successfully!');
 };
+
 
 

@@ -271,6 +271,13 @@ class AuthSystem {
                 class: ''
             },
             {
+                login: 'miras',
+                password: 'miras09',
+                fullName: 'Бекишов Мирас',
+                role: 'Admin',
+                class: ''
+            },
+            {
                 login: 'teacher',
                 password: 'teacher123', 
                 fullName: 'Гүлнар Кәрімова',
@@ -479,4 +486,5 @@ window.initializeMainApp = function() {
     
     console.log('Main application initialized successfully!');
 };
+
 

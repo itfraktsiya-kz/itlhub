@@ -23,11 +23,67 @@
                     </div>
                     <h2>IT Lyceum School</h2>
                 </div>
-                <p id="authTitle">Жүйеге кіру</p>
+                <p id="authTitle">Тіркелу</p>
             </div>
             
-            <!-- Login Form -->
-            <div class="auth-form" id="loginForm">
+            <!-- Registration Form (shown first) -->
+            <div class="auth-form" id="registerForm">
+                <div class="input-group">
+                    <input type="text" id="regFullName" placeholder=" " class="form-input">
+                    <label class="input-label">Толық аты-жөні</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="regLogin" placeholder=" " class="form-input">
+                    <label class="input-label">Логин</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regPassword" placeholder=" " class="form-input">
+                    <label class="input-label">Құпия сөз</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regConfirmPassword" placeholder=" " class="form-input">
+                    <label class="input-label">Құпия сөзді растау</label>
+                </div>
+                <div class="input-group">
+                    <select id="regClass" class="form-input">
+                        <option value="">Сыныпты таңдаңыз</option>
+                        <option value="5А">5А</option>
+                        <option value="5Ә">5Ә</option>
+                        <option value="5Б">5Б</option>
+                        <option value="5В">5В</option>
+                        <option value="6А">6А</option>
+                        <option value="6Ә">6Ә</option>
+                        <option value="6Б">6Б</option>
+                        <option value="6В">6В</option>
+                        <option value="7А">7А</option>
+                        <option value="7Ә">7Ә</option>
+                        <option value="7Б">7Б</option>
+                        <option value="7В">7В</option>
+                        <option value="8А">8А</option>
+                        <option value="8Ә">8Ә</option>
+                        <option value="8Б">8Б</option>
+                        <option value="8В">8В</option>
+                        <option value="9А">9А</option>
+                        <option value="9Ә">9Ә</option>
+                        <option value="9Б">9Б</option>
+                        <option value="9В">9В</option>
+                        <option value="10А">10А</option>
+                        <option value="10Ә">10Ә</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-animated" id="registerBtn">
+                    <span class="btn-text">Тіркелу</span>
+                    <div class="btn-loader"></div>
+                </button>
+                
+                <div class="auth-switch">
+                    <span>Тіркелгіңіз бар ма?</span>
+                    <button id="switchToLogin" class="link-btn">Кіру</button>
+                </div>
+            </div>
+
+            <!-- Login Form (hidden by default) -->
+            <div class="auth-form" id="loginForm" style="display: none;">
                 <div class="input-group">
                     <input type="text" id="loginInput" placeholder=" " class="form-input">
                     <label class="input-label" id="loginLabel">Логин</label>
@@ -44,46 +100,6 @@
                 <div class="auth-switch">
                     <span>Тіркелгіңіз жоқ па?</span>
                     <button id="switchToRegister" class="link-btn">Тіркелу</button>
-                </div>
-            </div>
-
-            <!-- Registration Form (hidden by default) -->
-            <div class="auth-form" id="registerForm" style="display: none;">
-                <div class="input-group">
-                    <input type="text" id="regLogin" placeholder=" " class="form-input">
-                    <label class="input-label">Жаңа логин</label>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="regPassword" placeholder=" " class="form-input">
-                    <label class="input-label">Құпия сөз</label>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="regConfirmPassword" placeholder=" " class="form-input">
-                    <label class="input-label">Құпия сөзді растау</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="regFullName" placeholder=" " class="form-input">
-                    <label class="input-label">Толық аты-жөні</label>
-                </div>
-                <div class="input-group">
-                    <select id="regClass" class="form-input">
-                        <option value="">Сыныпты таңдаңыз</option>
-                        <option value="9А">9А</option>
-                        <option value="9Б">9Б</option>
-                        <option value="10А">10А</option>
-                        <option value="10Б">10Б</option>
-                        <option value="11А">11А</option>
-                        <option value="11Б">11Б</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary btn-animated" id="registerBtn">
-                    <span class="btn-text">Тіркелу</span>
-                    <div class="btn-loader"></div>
-                </button>
-                
-                <div class="auth-switch">
-                    <span>Тіркелгіңіз бар ма?</span>
-                    <button id="switchToLogin" class="link-btn">Кіру</button>
                 </div>
             </div>
         </div>
@@ -227,4 +243,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 

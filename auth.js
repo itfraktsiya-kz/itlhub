@@ -90,9 +90,15 @@ class AuthSystem {
         toggleBtn.style.transform = 'translateY(-50%)';
         toggleBtn.style.cursor = 'pointer';
         toggleBtn.style.color = 'var(--text-tertiary)';
-        toggleBtn.style.padding = '5px';
+        toggleBtn.style.padding = '8px';
         toggleBtn.style.borderRadius = '4px';
         toggleBtn.style.transition = 'color 0.2s ease';
+        toggleBtn.style.width = '40px';
+        toggleBtn.style.height = '40px';
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.alignItems = 'center';
+        toggleBtn.style.justifyContent = 'center';
+        toggleBtn.style.zIndex = '2';
 
         // Add hover effect
         toggleBtn.addEventListener('mouseenter', () => {
@@ -132,7 +138,7 @@ class AuthSystem {
         inputGroup.appendChild(toggleBtn);
 
         // Adjust input padding to make space for the toggle button
-        passwordInput.style.paddingRight = '40px';
+        passwordInput.style.paddingRight = '50px';
     }
 
     checkAuthState() {

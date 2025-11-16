@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Lyceum School Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-container">
+            <div class="auth-header"> 
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="https://i.ibb.co.com/67RpcsRx/b12c476b-d92a-47dd-b730-51473f10066e.jpg" alt="IT Lyceum" id="schoolLogo">
+                    </div>
+                    <h2>IT Lyceum School</h2>
+                </div>
+                <p id="authTitle">Жүйеге кіру</p>
+            </div>
+            <div class="auth-form">
+                <div class="input-group">
+                    <input type="text" id="loginInput" placeholder=" " class="form-input">
+                    <label class="input-label" id="loginLabel">Логин</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="passwordInput" placeholder=" " class="form-input">
+                    <label class="input-label" id="passwordLabel">Құпия сөз</label>
+                </div>
+                <button class="btn btn-primary btn-animated" id="loginBtn">
+                    <span class="btn-text" id="loginBtnText">Кіру</span>
+                    <div class="btn-loader"></div>
+                </button>
+            </div>
+
+            <!-- Registration Form (hidden by default) -->
+            <div class="auth-form" id="registerForm" style="display: none;">
+                <div class="input-group">
+                    <input type="text" id="regLogin" placeholder=" " class="form-input">
+                    <label class="input-label">Жаңа логин</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regPassword" placeholder=" " class="form-input">
+                    <label class="input-label">Құпия сөз</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regConfirmPassword" placeholder=" " class="form-input">
+                    <label class="input-label">Құпия сөзді растау</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="regFullName" placeholder=" " class="form-input">
+                    <label class="input-label">Толық аты-жөні</label>
+                </div>
+                <div class="input-group">
+                    <select id="regClass" class="form-input">
+                        <option value="">Сыныпты таңдаңыз</option>
+                        <option value="9А">9А</option>
+                        <option value="9Б">9Б</option>
+                        <option value="10А">10А</option>
+                        <option value="10Б">10Б</option>
+                        <option value="11А">11А</option>
+                        <option value="11Б">11Б</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-animated" id="registerBtn">
+                    <span class="btn-text">Тіркелу</span>
+                    <div class="btn-loader"></div>
+                </button>
+                
+                <div class="auth-switch">
+                    <span>Тіркелгіңіз бар ма?</span>
+                    <button id="switchToLogin" class="link-btn">Кіру</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="https://i.ibb.co.com/67RpcsRx/b12c476b-d92a-47dd-b730-51473f10066e.jpg" alt="IT Lyceum Logo">
+                    </div>
+                    <h2>IT Lyceum</h2>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item active" data-page="school">
+                    <div class="menu-icon"><i class="fas fa-school"></i></div>
+                    <span class="menu-text" data-key="school">Мектеп туралы</span>
+                </div>
+                <div class="menu-item" data-page="news">
+                    <div class="menu-icon"><i class="fas fa-newspaper"></i></div>
+                    <span class="menu-text" data-key="news">Жаңалықтар</span>
+                </div>
+                <div class="menu-item" data-page="teachers">
+                    <div class="menu-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <span class="menu-text" data-key="teachers">Мұғалімдер</span>
+                </div>
+                <div class="menu-item" data-page="students">
+                    <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
+                    <span class="menu-text" data-key="students">Оқушылар</span>
+                </div>
+                <div class="menu-item" data-page="events">
+                    <div class="menu-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <span class="menu-text" data-key="events">Іс-шаралар</span>
+                </div>
+                <div class="menu-item" data-page="profile">
+                    <div class="menu-icon"><i class="fas fa-user-circle"></i></div>
+                    <span class="menu-text" data-key="profile">Жеке кабинет</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="breadcrumb">
+                        <span class="page-name" id="pageName">Мектеп туралы</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn theme-toggle" id="themeToggle" title="Тақырыпты өзгерту">
+                        <div class="theme-icon">
+                            <div class="sun"></div>
+                            <div class="moon"></div>
+                            <div class="stars">
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <div class="language-switcher">
+                        <button class="header-btn lang-toggle" id="langToggle">
+                            <span class="lang-text">KK</span>
+                            <span class="lang-arrow">▼</span>
+                        </button>
+                        <div class="lang-dropdown" id="langDropdown">
+                            <div class="lang-option" data-lang="kk">
+                                <span class="lang-flag">🇰🇿</span>
+                                Қазақша
+                            </div>
+                            <div class="lang-option" data-lang="ru">
+                                <span class="lang-flag">🇷🇺</span>
+                                Русский
+                            </div>
+                            <div class="lang-option" data-lang="en">
+                                <span class="lang-flag">🇺🇸</span>
+                                English
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <button class="header-btn user-btn" id="userBtn">
+                            <div class="user-avatar">
+                                <span id="userAvatar">АӘ</span>
+                            </div>
+                            <span class="user-name" id="userName">Әділ Әділов</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main id="content" class="content">
+                <!-- Content will be loaded here -->
+            </main>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

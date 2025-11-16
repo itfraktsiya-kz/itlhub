@@ -53,14 +53,308 @@
     --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.3);
 }
 
+/* ===== УЛУЧШЕНИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ===== */
+
+/* Предотвращение текстовых бликов и размытий на всех мобильных устройствах */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Предотвращение серых overlay при нажатии на iOS */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    /* Улучшение рендеринга для Android */
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Разрешить выделение текста в полях ввода */
+input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    /* Улучшение четкости текста в полях ввода */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Улучшение рендеринга шрифтов на всех мобильных устройствах */
 body {
-    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
+    /* Улучшение для iOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Улучшение для Android */
+    text-rendering: optimizeLegibility;
+    font-smooth: always;
+    /* Предотвращение скачков при прокрутке */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Предотвращение масштабирования на iOS и Android */
+input, textarea, select {
+    font-size: 16px; /* Предотвращает зум на iOS */
+    transform: translateZ(0); /* Аппаратное ускорение */
+    /* Улучшение для Android */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Улучшение производительности анимаций */
+.sidebar, .modal-overlay, .card, .btn, .mobile-menu-toggle, .sidebar-toggle {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
+    /* Улучшение для Android */
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+}
+
+/* Исправление для мобильного сайдбара */
+#sidebar {
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+    /* Улучшение производительности */
+    will-change: transform;
+}
+
+/* Предотвращение выделения для интерактивных элементов */
+.btn, .menu-item, .card, .mobile-menu-toggle, .sidebar-toggle {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-tap-highlight-color: transparent;
+    /* Улучшение для Android */
+    outline: none;
+}
+
+/* ===== УЛУЧШЕННАЯ АНИМАЦИЯ ГАМБУРГЕР-МЕНЮ С ХОРОШЕЙ ВИДИМОСТЬЮ ===== */
+
+.mobile-menu-toggle {
+    background: none;
+    border: none;
+    width: 48px;
+    height: 48px;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1000;
+    border: 2px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.mobile-menu-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Увеличиваем и улучшаем видимость линий гамбургера */
+.mobile-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--text-primary);
+    margin: 4px 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    border-radius: 3px;
+    position: relative;
+    transform-origin: center;
+}
+
+/* Анимация при открытии меню - превращение в четкий крестик */
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+    width: 24px;
+    background: var(--primary);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+    width: 24px;
+    background: var(--primary);
+}
+
+/* Дополнительная анимация - линия уходит вперед (видимая) */
+.mobile-menu-toggle.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 0;
+    background: var(--primary);
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    animation: lineForward 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6) 0.3s forwards;
+    z-index: -1;
+}
+
+@keyframes lineForward {
+    0% {
+        height: 0;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(45deg) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
+    }
+    100% {
+        height: 40px;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1);
+    }
+}
+
+/* Анимация для сайдбар тоггле с улучшенной видимостью */
+.sidebar-toggle {
+    background: none;
+    border: none;
+    width: 48px;
+    height: 48px;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1000;
+    border: 2px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.sidebar-toggle:hover {
+    transform: scale(1.1);
+    background: var(--bg-tertiary);
+    border-color: var(--primary);
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.95);
+}
+
+.sidebar-toggle span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--text-primary);
+    margin: 4px 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    border-radius: 3px;
+    transform-origin: center;
+}
+
+/* Улучшенная анимация для сайдбар тоггле */
+.sidebar.collapsed .sidebar-toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+    width: 24px;
+    background: var(--primary);
+}
+
+.sidebar.collapsed .sidebar-toggle span:nth-child(2) {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+}
+
+.sidebar.collapsed .sidebar-toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+    width: 24px;
+    background: var(--primary);
+}
+
+/* Дополнительная анимация для сайдбар тоггле */
+.sidebar.collapsed .sidebar-toggle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 0;
+    background: var(--primary);
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    animation: lineForwardSidebar 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6) 0.2s forwards;
+    z-index: -1;
+}
+
+@keyframes lineForwardSidebar {
+    0% {
+        height: 0;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(45deg) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
+    }
+    100% {
+        height: 35px;
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(45deg) scale(1);
+    }
+}
+
+/* Убедимся, что кнопки всегда видны и доступны */
+.mobile-header .mobile-menu-toggle,
+.sidebar-header .sidebar-toggle {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+/* Улучшение видимости для мобильных устройств */
+@media (max-width: 768px) {
+    .mobile-menu-toggle,
+    .sidebar-toggle {
+        width: 52px;
+        height: 52px;
+        border-width: 2px;
+    }
+    
+    .mobile-menu-toggle span,
+    .sidebar-toggle span {
+        width: 26px;
+        height: 3px;
+        margin: 4px 0;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(1),
+    .sidebar.collapsed .sidebar-toggle span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(3),
+    .sidebar.collapsed .sidebar-toggle span:nth-child(3) {
+        transform: rotate(-45deg) translate(8px, -8px);
+    }
 }
 
 /* Preloader */
@@ -207,6 +501,8 @@ body {
     font-size: 16px;
     transition: var(--transition);
     -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .form-input:focus {
@@ -259,6 +555,10 @@ body {
     font-size: 16px;
     min-height: 44px;
     -webkit-tap-highlight-color: transparent;
+    /* Улучшение для Android */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .btn::before {
@@ -403,36 +703,7 @@ body {
     justify-content: space-between;
     height: 60px;
     backdrop-filter: blur(10px);
-}
-
-.mobile-menu-toggle {
-    background: none;
-    border: none;
-    width: 44px;
-    height: 44px;
-    position: relative;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius);
-    transition: var(--transition);
-    -webkit-tap-highlight-color: transparent;
-}
-
-.mobile-menu-toggle:hover {
-    background: var(--bg-tertiary);
-}
-
-.mobile-menu-toggle span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--text-primary);
-    margin: 3px 0;
-    transition: var(--transition);
-    border-radius: 2px;
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .mobile-logo {
@@ -499,6 +770,7 @@ body {
     background: rgba(0, 0, 0, 0.5);
     z-index: 95;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .mobile-menu-overlay.active {
@@ -518,6 +790,7 @@ body {
     transform: translateX(0);
     overflow-y: auto;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .sidebar.collapsed {
@@ -545,50 +818,6 @@ body {
     opacity: 0;
     width: 0;
     margin: 0;
-}
-
-.sidebar-toggle {
-    background: none;
-    border: none;
-    width: 44px;
-    height: 44px;
-    position: relative;
-    cursor: pointer;
-    padding: 0;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.sidebar-toggle:hover {
-    transform: scale(1.1);
-    background: var(--bg-tertiary);
-}
-
-.sidebar-toggle span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--text-primary);
-    margin: 3px 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 2px;
-    transform-origin: center;
-}
-
-.sidebar.collapsed .sidebar-toggle span:nth-child(1) {
-    transform: rotate(45deg) translate(4px, 4px);
-}
-
-.sidebar.collapsed .sidebar-toggle span:nth-child(2) {
-    opacity: 0;
-}
-
-.sidebar.collapsed .sidebar-toggle span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -5px);
 }
 
 .sidebar-menu {
@@ -696,6 +925,7 @@ body {
     z-index: 50;
     height: 80px;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .breadcrumb .page-name {
@@ -732,7 +962,7 @@ body {
     box-shadow: var(--shadow);
 }
 
-/* Theme Toggle - Old Design */
+/* Theme Toggle */
 .theme-toggle {
     width: 48px;
     height: 48px;
@@ -845,6 +1075,7 @@ body {
     z-index: 10;
     margin-top: 0.5rem;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .lang-dropdown.show {
@@ -1399,6 +1630,7 @@ body {
     border-left: 4px solid var(--success);
     transform: translateX(100%);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .notification.show {
@@ -1595,6 +1827,7 @@ body {
     margin-top: 0.5rem;
     display: none;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .calendar-dropdown.show {
@@ -1807,6 +2040,7 @@ body {
     transition: opacity 0.3s ease;
     padding: 1rem;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .modal-overlay.show {
@@ -1825,6 +2059,7 @@ body {
     transition: transform 0.3s ease;
     border: 1px solid var(--border);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .modal-overlay.show .modal-content {
@@ -2080,7 +2315,8 @@ body {
     min-height: 44px;
 }
 
-/* Mobile responsive design */
+/* ===== МОБИЛЬНАЯ АДАПТИВНОСТЬ ===== */
+
 @media (max-width: 1024px) {
     .mobile-header {
         display: flex;
@@ -2569,12 +2805,15 @@ body {
 /* Mobile performance optimizations */
 @media (max-width: 768px) {
     .menu-item::before,
-    .btn::before {
+    .btn::before,
+    .card::before {
         display: none;
     }
     
-    .card::before {
-        display: none;
+    .menu-item,
+    .btn,
+    .card {
+        transition: none;
     }
 }
 
@@ -2715,6 +2954,7 @@ button,
 .notification {
     z-index: 1000;
 }
+
 /* Fix for sidebar toggle button visibility */
 .sidebar-toggle {
     z-index: 101;
@@ -2764,6 +3004,7 @@ button,
     position: relative;
     z-index: 1;
 }
+
 /* Fix for mobile menu */
 .mobile-menu-toggle {
     display: flex !important;
@@ -2816,6 +3057,7 @@ button,
     opacity: 1 !important;
     pointer-events: all !important;
 }
+
 /* Дополнительные стили для мобильного меню */
 @media (max-width: 1024px) {
     #sidebar {
@@ -2863,5 +3105,132 @@ button,
     transform: scale(0.95);
 }
 
+/* Дополнительные исправления для мобильных устройств */
+@media (max-width: 768px) {
+    /* Улучшение производительности для анимаций */
+    .sidebar,
+    .modal-overlay,
+    .card,
+    .btn {
+        transform: translateZ(0);
+        will-change: transform;
+    }
+    
+    /* Улучшение четкости текста */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+    
+    /* Предотвращение мерцания */
+    .menu-item,
+    .btn {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    
+    /* Улучшение скролла */
+    .sidebar,
+    .modal-body {
+        -webkit-overflow-scrolling: touch;
+    }
+}
 
+/* Исправление для Safari на iOS */
+@supports (-webkit-touch-callout: none) {
+    .auth-container,
+    .card,
+    .modal-content {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+}
 
+/* Улучшение контрастности для доступности */
+@media (prefers-contrast: high) {
+    :root {
+        --border: #000000;
+        --shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .btn {
+        border: 2px solid var(--border);
+    }
+}
+
+/* Улучшение для устройств с уменьшенным движением */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЕ УЛУЧШЕНИЯ ДЛЯ ANDROID ===== */
+
+/* Улучшение для Chrome на Android */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .form-input,
+    .btn,
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+}
+
+/* Улучшение для Samsung Internet */
+@supports (-webkit-touch-callout: none) and (not (-webkit-overflow-scrolling: touch)) {
+    .sidebar,
+    .modal-body {
+        overflow-scrolling: touch;
+    }
+}
+
+/* Улучшение для старых Android устройств */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    html {
+        -webkit-text-size-adjust: none;
+    }
+}
+
+/* Улучшение производительности анимаций для слабых устройств */
+@media (max-width: 768px) {
+    .menu-item::before,
+    .btn::before,
+    .card::before {
+        display: none;
+    }
+    
+    .menu-item,
+    .btn,
+    .card {
+        transition: none;
+    }
+}
+
+/* Улучшение для очень старых мобильных устройств */
+@media (max-width: 360px) {
+    .content {
+        padding: 0.5rem;
+    }
+    
+    .card {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .page-title {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+    }
+}

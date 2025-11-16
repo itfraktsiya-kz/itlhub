@@ -81,7 +81,17 @@ let newsData = JSON.parse(localStorage.getItem('newsData')) || [
             en: "September 1, 2024"
         },
         banner: null,
-        image: null
+        image: null,
+        links: [
+            {
+                title: "Оқу жылының кестесі",
+                url: "https://example.com/schedule"
+            },
+            {
+                title: "IT курстар туралы ақпарат", 
+                url: "https://example.com/it-courses"
+            }
+        ]
     },
     {
         id: 2,
@@ -102,7 +112,13 @@ let newsData = JSON.parse(localStorage.getItem('newsData')) || [
             en: "October 15, 2024"
         },
         banner: null,
-        image: null
+        image: null,
+        links: [
+            {
+                title: "Олимпиада нәтижелері",
+                url: "https://example.com/olympiad-results"
+            }
+        ]
     }
 ];
 
@@ -126,7 +142,17 @@ let eventsData = JSON.parse(localStorage.getItem('eventsData')) || [
             en: "September 5, 2024"
         },
         banner: null,
-        image: null
+        image: null,
+        links: [
+            {
+                title: "Тур брондау",
+                url: "https://example.com/tour-booking"
+            },
+            {
+                title: "Мектеп картасы",
+                url: "https://example.com/school-map"
+            }
+        ]
     },
     {
         id: 2,
@@ -147,7 +173,17 @@ let eventsData = JSON.parse(localStorage.getItem('eventsData')) || [
             en: "October 20, 2024"
         },
         banner: null,
-        image: null
+        image: null,
+        links: [
+            {
+                title: "Жобаны тіркеу",
+                url: "https://example.com/project-registration"
+            },
+            {
+                title: "Ережелер",
+                url: "https://example.com/conference-rules"
+            }
+        ]
     }
 ];
 
@@ -850,7 +886,7 @@ function formatDateForDisplay(dateString) {
 
 // Красивое модальное окно для подробной информации
 function showDetailModal(type, id) {
-    let item, title, content, date;
+    let item, title, content, date, links;
     
     if (type === 'news') {
         item = newsData.find(n => n.id === id);
@@ -858,6 +894,7 @@ function showDetailModal(type, id) {
             title = item.title[currentLanguage] || item.title['kk'];
             content = item.content[currentLanguage] || item.content['kk'];
             date = formatDateForDisplay(item.date);
+            links = item.links || [];
         }
     } else if (type === 'event') {
         item = eventsData.find(e => e.id === id);
@@ -865,6 +902,7 @@ function showDetailModal(type, id) {
             title = item.title[currentLanguage] || item.title['kk'];
             content = item.description[currentLanguage] || item.description['kk'];
             date = formatDateForDisplay(item.date);
+            links = item.links || [];
         }
     }
     
@@ -897,6 +935,19 @@ function showDetailModal(type, id) {
                 <div class="modal-text">
                     <p>${content}</p>
                 </div>
+                ${links.length > 0 ? `
+                    <div class="modal-links">
+                        <h4><i class="fas fa-link"></i> ${currentLanguage === 'kk' ? 'Қосымша материалдар' : currentLanguage === 'ru' ? 'Дополнительные материалы' : 'Additional Materials'}</h4>
+                        <div class="links-list">
+                            ${links.map(link => `
+                                <a href="${link.url}" target="_blank" class="link-item">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    ${link.title}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary modal-ok-btn">
@@ -1084,7 +1135,12 @@ function getNewsPage() {
             allFields: "Барлық өрістерді толтырыңыз!",
             newsAdded: "Жаңалық сәтті қосылды!",
             newsDeleted: "Жаңалық жойылды!",
-            toggleForm: "Жаңалық қосу формасы"
+            toggleForm: "Жаңалық қосу формасы",
+            linksLabel: "Сілтемелер",
+            addLink: "Сілтеме қосу",
+            linkTitle: "Сілтеме атауы",
+            linkUrl: "URL мекенжайы",
+            removeLink: "Жою"
         },
         ru: {
             title: "Новости", 
@@ -1099,7 +1155,12 @@ function getNewsPage() {
             allFields: "Заполните все поля!",
             newsAdded: "Новость успешно добавлена!",
             newsDeleted: "Новость удалена!",
-            toggleForm: "Форма добавления новости"
+            toggleForm: "Форма добавления новости",
+            linksLabel: "Ссылки",
+            addLink: "Добавить ссылку",
+            linkTitle: "Название ссылки",
+            linkUrl: "URL адрес",
+            removeLink: "Удалить"
         },
         en: {
             title: "News",
@@ -1114,7 +1175,12 @@ function getNewsPage() {
             allFields: "Please fill all fields!",
             newsAdded: "News successfully added!",
             newsDeleted: "News deleted!",
-            toggleForm: "Add News Form"
+            toggleForm: "Add News Form",
+            linksLabel: "Links",
+            addLink: "Add Link",
+            linkTitle: "Link Title",
+            linkUrl: "URL Address",
+            removeLink: "Remove"
         }
     };
 
@@ -1125,18 +1191,20 @@ function getNewsPage() {
             <h1 class="page-title">${t.title}</h1>
             
             ${isAdmin ? `
-            <div class="admin-panel-compact admin-only">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 class="card-title">
-                        <i class="fas fa-plus-circle"></i>
-                        ${t.addNews}
-                    </h2>
-                    <button class="admin-panel-toggle" id="newsFormToggle">
-                        <i class="fas fa-chevron-down"></i>
-                        <span>${t.toggleForm}</span>
+            <!-- Кнопка добавления новости -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="card-title">${t.addNews}</h2>
+                    <button class="btn btn-primary" id="showNewsFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addButton}
                     </button>
                 </div>
-                <div class="admin-panel-content" id="newsFormContent">
+            </div>
+
+            <!-- Форма добавления новости -->
+            <div class="card admin-panel-compact" id="newsFormPanel" style="display: none; margin-bottom: 2rem;">
+                <div class="admin-panel-content">
                     <div class="form-row">
                         <div class="form-group">
                             <label>${t.titleLabel} *</label>
@@ -1151,6 +1219,19 @@ function getNewsPage() {
                         <label>${t.contentLabel} *</label>
                         <textarea id="newsContent" class="form-input" rows="3" placeholder="${t.contentLabel}"></textarea>
                     </div>
+                    
+                    <!-- Секция ссылок -->
+                    <div class="form-group">
+                        <label>${t.linksLabel}</label>
+                        <div id="newsLinksContainer">
+                            <!-- Ссылки будут добавляться динамически -->
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="addNewsLinkBtn">
+                            <i class="fas fa-plus"></i>
+                            ${t.addLink}
+                        </button>
+                    </div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label>${t.imageLabel}</label>
@@ -1181,6 +1262,10 @@ function getNewsPage() {
                             <span class="btn-text">${t.addButton}</span>
                             <div class="btn-loader"></div>
                         </button>
+                        <button class="btn btn-outline btn-compact" id="cancelNewsBtn">
+                            <i class="fas fa-times"></i>
+                            ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1210,6 +1295,27 @@ function getNewsPage() {
                         <p style="margin-bottom: 1.5rem; color: var(--text-secondary); line-height: 1.6;">
                             ${(news.content[currentLanguage] || news.content['kk']).length > 150 ? (news.content[currentLanguage] || news.content['kk']).substring(0, 150) + '...' : (news.content[currentLanguage] || news.content['kk'])}
                         </p>
+                        
+                        <!-- Отображение ссылок для всех пользователей -->
+                        ${news.links && news.links.length > 0 ? `
+                            <div class="news-links" style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    <i class="fas fa-link"></i> 
+                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                </div>
+                                <div class="links-preview">
+                                    ${news.links.slice(0, 2).map(link => `
+                                        <a href="${link.url}" target="_blank" class="link-preview" title="${link.title}">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            ${link.title.length > 30 ? link.title.substring(0, 30) + '...' : link.title}
+                                        </a>
+                                    `).join('')}
+                                    ${news.links.length > 2 ? `
+                                        <span class="more-links">+${news.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
                         
                         <div class="card-actions">
                             <button class="btn btn-outline btn-animated read-more-btn" data-id="${news.id}" data-type="news">
@@ -1448,7 +1554,12 @@ function getEventsPage() {
             allFields: "Барлық өрістерді толтырыңыз!",
             eventAdded: "Іс-шара сәтті қосылды!",
             eventDeleted: "Іс-шара жойылды!",
-            toggleForm: "Іс-шара қосу формасы"
+            toggleForm: "Іс-шара қосу формасы",
+            linksLabel: "Сілтемелер",
+            addLink: "Сілтеме қосу",
+            linkTitle: "Сілтеме атауы",
+            linkUrl: "URL мекенжайы",
+            removeLink: "Жою"
         },
         ru: {
             title: "Мероприятия",
@@ -1464,7 +1575,12 @@ function getEventsPage() {
             allFields: "Заполните все поля!",
             eventAdded: "Мероприятие успешно добавлено!",
             eventDeleted: "Мероприятие удалено!",
-            toggleForm: "Форма добавления мероприятия"
+            toggleForm: "Форма добавления мероприятия",
+            linksLabel: "Ссылки",
+            addLink: "Добавить ссылку",
+            linkTitle: "Название ссылки",
+            linkUrl: "URL адрес",
+            removeLink: "Удалить"
         },
         en: {
             title: "Events",
@@ -1480,7 +1596,12 @@ function getEventsPage() {
             allFields: "Please fill all fields!",
             eventAdded: "Event successfully added!",
             eventDeleted: "Event deleted!",
-            toggleForm: "Add Event Form"
+            toggleForm: "Add Event Form",
+            linksLabel: "Links",
+            addLink: "Add Link",
+            linkTitle: "Link Title",
+            linkUrl: "URL Address",
+            removeLink: "Remove"
         }
     };
 
@@ -1491,18 +1612,20 @@ function getEventsPage() {
             <h1 class="page-title">${t.title}</h1>
             
             ${isAdmin ? `
-            <div class="admin-panel-compact admin-only">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 class="card-title">
-                        <i class="fas fa-plus-circle"></i>
-                        ${t.addEvent}
-                    </h2>
-                    <button class="admin-panel-toggle" id="eventFormToggle">
-                        <i class="fas fa-chevron-down"></i>
-                        <span>${t.toggleForm}</span>
+            <!-- Кнопка добавления мероприятия -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="card-title">${t.addEvent}</h2>
+                    <button class="btn btn-primary" id="showEventFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addButton}
                     </button>
                 </div>
-                <div class="admin-panel-content" id="eventFormContent">
+            </div>
+
+            <!-- Форма добавления мероприятия -->
+            <div class="card admin-panel-compact" id="eventFormPanel" style="display: none; margin-bottom: 2rem;">
+                <div class="admin-panel-content">
                     <div class="form-row">
                         <div class="form-group">
                             <label>${t.titleLabel} *</label>
@@ -1517,6 +1640,19 @@ function getEventsPage() {
                         <label>${t.descriptionLabel} *</label>
                         <textarea id="eventDescription" class="form-input" rows="3" placeholder="${t.descriptionLabel}"></textarea>
                     </div>
+                    
+                    <!-- Секция ссылок -->
+                    <div class="form-group">
+                        <label>${t.linksLabel}</label>
+                        <div id="eventLinksContainer">
+                            <!-- Ссылки будут добавляться динамически -->
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="addEventLinkBtn">
+                            <i class="fas fa-plus"></i>
+                            ${t.addLink}
+                        </button>
+                    </div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label>${t.imageLabel}</label>
@@ -1547,6 +1683,10 @@ function getEventsPage() {
                             <span class="btn-text">${t.addButton}</span>
                             <div class="btn-loader"></div>
                         </button>
+                        <button class="btn btn-outline btn-compact" id="cancelEventBtn">
+                            <i class="fas fa-times"></i>
+                            ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1576,6 +1716,27 @@ function getEventsPage() {
                         <p style="margin-bottom: 1.5rem; color: var(--text-secondary); line-height: 1.6;">
                             ${(event.description[currentLanguage] || event.description['kk']).length > 150 ? (event.description[currentLanguage] || event.description['kk']).substring(0, 150) + '...' : (event.description[currentLanguage] || event.description['kk'])}
                         </p>
+                        
+                        <!-- Отображение ссылок для всех пользователей -->
+                        ${event.links && event.links.length > 0 ? `
+                            <div class="event-links" style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    <i class="fas fa-link"></i> 
+                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                </div>
+                                <div class="links-preview">
+                                    ${event.links.slice(0, 2).map(link => `
+                                        <a href="${link.url}" target="_blank" class="link-preview" title="${link.title}">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            ${link.title.length > 30 ? link.title.substring(0, 30) + '...' : link.title}
+                                        </a>
+                                    `).join('')}
+                                    ${event.links.length > 2 ? `
+                                        <span class="more-links">+${event.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
                         
                         <div class="card-actions">
                             <button class="btn btn-primary btn-animated participate-event-btn" data-id="${event.id}">
@@ -1679,6 +1840,7 @@ function getProfilePage() {
                     <ul class="role-features-list">
                         <li>✅ ${currentLanguage === 'kk' ? 'Жаңалықтарды қосу/жою' : currentLanguage === 'ru' ? 'Добавление/удаление новостей' : 'Add/delete news'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Іс-шараларды қосу/жою' : currentLanguage === 'ru' ? 'Добавление/удаление мероприятий' : 'Add/delete events'}</li>
+                        <li>✅ ${currentLanguage === 'kk' ? 'Сілтемелерді қосу' : currentLanguage === 'ru' ? 'Добавление ссылок' : 'Add links'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Барлық ақпаратты көру' : currentLanguage === 'ru' ? 'Просмотр всей информации' : 'View all information'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Жүйені басқару' : currentLanguage === 'ru' ? 'Управление системой' : 'System management'}</li>
                     </ul>
@@ -1691,6 +1853,7 @@ function getProfilePage() {
                     <ul class="role-features-list">
                         <li>✅ ${currentLanguage === 'kk' ? 'Жаңалықтарды көру' : currentLanguage === 'ru' ? 'Просмотр новостей' : 'View news'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Іс-шараларды көру' : currentLanguage === 'ru' ? 'Просмотр мероприятий' : 'View events'}</li>
+                        <li>✅ ${currentLanguage === 'kk' ? 'Сілтемелерге қол жеткізу' : currentLanguage === 'ru' ? 'Доступ к ссылкам' : 'Access to links'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Оқушылар тізімін көру' : currentLanguage === 'ru' ? 'Просмотр списка учеников' : 'View student list'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Жеке кабинет' : currentLanguage === 'ru' ? 'Личный кабинет' : 'Personal account'}</li>
                     </ul>
@@ -1703,6 +1866,7 @@ function getProfilePage() {
                     <ul class="role-features-list">
                         <li>✅ ${currentLanguage === 'kk' ? 'Жаңалықтарды көру' : currentLanguage === 'ru' ? 'Просмотр новостей' : 'View news'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Іс-шараларға қатысу' : currentLanguage === 'ru' ? 'Участие в мероприятиях' : 'Participate in events'}</li>
+                        <li>✅ ${currentLanguage === 'kk' ? 'Сілтемелерге қол жеткізу' : currentLanguage === 'ru' ? 'Доступ к ссылкам' : 'Access to links'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Мұғалімдермен байланысу' : currentLanguage === 'ru' ? 'Связь с учителями' : 'Contact teachers'}</li>
                         <li>✅ ${currentLanguage === 'kk' ? 'Жеке кабинет' : currentLanguage === 'ru' ? 'Личный кабинет' : 'Personal account'}</li>
                     </ul>
@@ -1990,6 +2154,51 @@ function contactTeacher(name) {
     showNotification(t, 'info');
 }
 
+// Функция для добавления полей ссылок
+function addLinkField(containerId, linkIndex = 0) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const t = currentLanguage === 'kk' ? {
+        linkTitle: "Сілтеме атауы",
+        linkUrl: "URL мекенжайы",
+        removeLink: "Жою"
+    } : currentLanguage === 'ru' ? {
+        linkTitle: "Название ссылки",
+        linkUrl: "URL адрес",
+        removeLink: "Удалить"
+    } : {
+        linkTitle: "Link Title",
+        linkUrl: "URL Address",
+        removeLink: "Remove"
+    };
+    
+    const linkField = document.createElement('div');
+    linkField.className = 'link-field';
+    linkField.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;';
+    
+    linkField.innerHTML = `
+        <div style="flex: 1;">
+            <input type="text" class="form-input" placeholder="${t.linkTitle}" data-link-title>
+        </div>
+        <div style="flex: 2;">
+            <input type="url" class="form-input" placeholder="https://example.com" data-link-url>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" data-remove-link style="white-space: nowrap;">
+            <i class="fas fa-times"></i>
+            ${t.removeLink}
+        </button>
+    `;
+    
+    container.appendChild(linkField);
+    
+    // Добавляем обработчик для удаления ссылки
+    const removeBtn = linkField.querySelector('[data-remove-link]');
+    removeBtn.addEventListener('click', function() {
+        linkField.remove();
+    });
+}
+
 // Initialize page specific functionality
 function initializePage(pageId) {
     switch (pageId) {
@@ -2015,35 +2224,35 @@ function initializeNewsPage() {
     const isAdmin = currentUser?.role === 'Адмін';
     
     // Initialize calendar for news date
-    if (isAdmin) {
-        const newsDateInput = document.getElementById('newsDate');
-        if (newsDateInput) {
-            window.newsCalendar = new Calendar('newsDate');
-        }
+    const newsDateInput = document.getElementById('newsDate');
+    if (newsDateInput) {
+        window.newsCalendar = new Calendar('newsDate');
     }
     
     if (isAdmin) {
         // Toggle form visibility
-        const newsFormToggle = document.getElementById('newsFormToggle');
-        const newsFormContent = document.getElementById('newsFormContent');
+        const showNewsFormBtn = document.getElementById('showNewsFormBtn');
+        const newsFormPanel = document.getElementById('newsFormPanel');
+        const cancelNewsBtn = document.getElementById('cancelNewsBtn');
         
-        if (newsFormToggle && newsFormContent) {
-            let isFormVisible = false;
-            
-            newsFormToggle.addEventListener('click', function() {
-                isFormVisible = !isFormVisible;
-                newsFormContent.classList.toggle('collapsed', !isFormVisible);
-                
-                const icon = this.querySelector('i');
-                if (isFormVisible) {
-                    icon.className = 'fas fa-chevron-up';
-                } else {
-                    icon.className = 'fas fa-chevron-down';
-                }
+        if (showNewsFormBtn && newsFormPanel) {
+            showNewsFormBtn.addEventListener('click', function() {
+                newsFormPanel.style.display = newsFormPanel.style.display === 'none' ? 'block' : 'none';
             });
-            
-            // Initially hide the form
-            newsFormContent.classList.add('collapsed');
+        }
+        
+        if (cancelNewsBtn && newsFormPanel) {
+            cancelNewsBtn.addEventListener('click', function() {
+                newsFormPanel.style.display = 'none';
+            });
+        }
+        
+        // Add link functionality
+        const addNewsLinkBtn = document.getElementById('addNewsLinkBtn');
+        if (addNewsLinkBtn) {
+            addNewsLinkBtn.addEventListener('click', function() {
+                addLinkField('newsLinksContainer');
+            });
         }
         
         // Add news functionality
@@ -2060,6 +2269,21 @@ function initializeNewsPage() {
                 const date = document.getElementById('newsDate').value.trim();
                 const imageFile = newsImageInput.files[0];
                 const bannerFile = newsBannerInput.files[0];
+                
+                // Собираем ссылки
+                const links = [];
+                const linkFields = document.querySelectorAll('#newsLinksContainer .link-field');
+                linkFields.forEach(field => {
+                    const titleInput = field.querySelector('[data-link-title]');
+                    const urlInput = field.querySelector('[data-link-url]');
+                    
+                    if (titleInput.value.trim() && urlInput.value.trim()) {
+                        links.push({
+                            title: titleInput.value.trim(),
+                            url: urlInput.value.trim()
+                        });
+                    }
+                });
                 
                 const t = currentLanguage === 'kk' ? {
                     allFields: "Барлық өрістерді толтырыңыз!",
@@ -2098,7 +2322,8 @@ function initializeNewsPage() {
                         en: formatDateForDisplay(date)
                     },
                     banner: null,
-                    image: null
+                    image: null,
+                    links: links
                 };
                 
                 try {
@@ -2123,6 +2348,8 @@ function initializeNewsPage() {
                     newsImagePreview.src = '';
                     newsBannerPreview.style.display = 'none';
                     newsBannerPreview.src = '';
+                    document.getElementById('newsLinksContainer').innerHTML = '';
+                    newsFormPanel.style.display = 'none';
                     
                     loadPage('news');
                     showNotification(t.added);
@@ -2227,35 +2454,35 @@ function initializeEventsPage() {
     const isAdmin = currentUser?.role === 'Адмін';
     
     // Initialize calendar for event date
-    if (isAdmin) {
-        const eventDateInput = document.getElementById('eventDate');
-        if (eventDateInput) {
-            window.eventCalendar = new Calendar('eventDate');
-        }
+    const eventDateInput = document.getElementById('eventDate');
+    if (eventDateInput) {
+        window.eventCalendar = new Calendar('eventDate');
     }
     
     if (isAdmin) {
         // Toggle form visibility
-        const eventFormToggle = document.getElementById('eventFormToggle');
-        const eventFormContent = document.getElementById('eventFormContent');
+        const showEventFormBtn = document.getElementById('showEventFormBtn');
+        const eventFormPanel = document.getElementById('eventFormPanel');
+        const cancelEventBtn = document.getElementById('cancelEventBtn');
         
-        if (eventFormToggle && eventFormContent) {
-            let isFormVisible = false;
-            
-            eventFormToggle.addEventListener('click', function() {
-                isFormVisible = !isFormVisible;
-                eventFormContent.classList.toggle('collapsed', !isFormVisible);
-                
-                const icon = this.querySelector('i');
-                if (isFormVisible) {
-                    icon.className = 'fas fa-chevron-up';
-                } else {
-                    icon.className = 'fas fa-chevron-down';
-                }
+        if (showEventFormBtn && eventFormPanel) {
+            showEventFormBtn.addEventListener('click', function() {
+                eventFormPanel.style.display = eventFormPanel.style.display === 'none' ? 'block' : 'none';
             });
-            
-            // Initially hide the form
-            eventFormContent.classList.add('collapsed');
+        }
+        
+        if (cancelEventBtn && eventFormPanel) {
+            cancelEventBtn.addEventListener('click', function() {
+                eventFormPanel.style.display = 'none';
+            });
+        }
+        
+        // Add link functionality
+        const addEventLinkBtn = document.getElementById('addEventLinkBtn');
+        if (addEventLinkBtn) {
+            addEventLinkBtn.addEventListener('click', function() {
+                addLinkField('eventLinksContainer');
+            });
         }
         
         // Add event functionality
@@ -2272,6 +2499,21 @@ function initializeEventsPage() {
                 const date = document.getElementById('eventDate').value.trim();
                 const imageFile = eventImageInput.files[0];
                 const bannerFile = eventBannerInput.files[0];
+                
+                // Собираем ссылки
+                const links = [];
+                const linkFields = document.querySelectorAll('#eventLinksContainer .link-field');
+                linkFields.forEach(field => {
+                    const titleInput = field.querySelector('[data-link-title]');
+                    const urlInput = field.querySelector('[data-link-url]');
+                    
+                    if (titleInput.value.trim() && urlInput.value.trim()) {
+                        links.push({
+                            title: titleInput.value.trim(),
+                            url: urlInput.value.trim()
+                        });
+                    }
+                });
                 
                 const t = currentLanguage === 'kk' ? {
                     allFields: "Барлық өрістерді толтырыңыз!",
@@ -2310,7 +2552,8 @@ function initializeEventsPage() {
                         en: formatDateForDisplay(date)
                     },
                     banner: null,
-                    image: null
+                    image: null,
+                    links: links
                 };
                 
                 try {
@@ -2335,6 +2578,8 @@ function initializeEventsPage() {
                     eventImagePreview.src = '';
                     eventBannerPreview.style.display = 'none';
                     eventBannerPreview.src = '';
+                    document.getElementById('eventLinksContainer').innerHTML = '';
+                    eventFormPanel.style.display = 'none';
                     
                     loadPage('events');
                     showNotification(t.added);
@@ -2513,10 +2758,11 @@ window.changeLanguage = changeLanguage;
 window.initializeMainApp = initializeMainApp;
 window.showDetailModal = showDetailModal;
 window.formatDateForDisplay = formatDateForDisplay;
+window.addLinkField = addLinkField;
 
 console.log('🎉 Application initialized successfully!');
 
-// Добавляем стили для модального окна
+// Добавляем стили для модального окна и ссылок
 const modalStyles = document.createElement('style');
 modalStyles.textContent = `
     .modal-overlay {
@@ -2647,6 +2893,53 @@ modalStyles.textContent = `
         margin-bottom: 0;
     }
 
+    .modal-links {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .modal-links h4 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        font-size: 1.125rem;
+    }
+
+    .modal-links h4 i {
+        color: var(--primary);
+        margin-right: 0.5rem;
+    }
+
+    .links-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .link-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: background 0.2s ease;
+        border: 1px solid var(--border);
+    }
+
+    .link-item:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .link-item i {
+        color: var(--primary);
+        font-size: 0.875rem;
+    }
+
     .modal-footer {
         padding: 1.5rem 2rem;
         border-top: 1px solid var(--border);
@@ -2657,6 +2950,45 @@ modalStyles.textContent = `
 
     .modal-ok-btn {
         min-width: 120px;
+    }
+
+    /* Стили для превью ссылок в карточках */
+    .links-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .link-preview {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: var(--bg-secondary);
+        border-radius: 6px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.75rem;
+        transition: background 0.2s ease;
+        border: 1px solid var(--border);
+    }
+
+    .link-preview:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .link-preview i {
+        color: var(--primary);
+        font-size: 0.7rem;
+    }
+
+    .more-links {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        padding: 0.25rem 0.5rem;
     }
 
     @media (max-width: 768px) {
@@ -2683,3 +3015,4 @@ modalStyles.textContent = `
     }
 `;
 document.head.appendChild(modalStyles);
+

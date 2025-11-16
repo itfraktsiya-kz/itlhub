@@ -2765,48 +2765,5 @@ button,
     z-index: 1;
 }
 
-/* Fix for sidebar animations */
-.sidebar.animating {
-    z-index: 100;
-}
 
-/* Specific fix for the toggle button in different states */
-#sidebarToggle {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    transform: none !important;
-}
 
-/* Remove any hiding styles that might be affecting the button */
-.sidebar-toggle[style*="display: none"],
-.sidebar-toggle[style*="visibility: hidden"],
-.sidebar-toggle[style*="opacity: 0"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* Additional mobile fixes */
-@media (max-width: 1024px) {
-    .sidebar-toggle {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-    
-    .mobile-menu-toggle {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-}
-
-/* Force show the toggle button */
-#sidebarToggle {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: all !important;
-}

@@ -149,6 +149,29 @@ const teachersData = [
             en: "Specialist in higher mathematics. Able to explain complex topics in a simple way to students."
         },
         image: null
+    },
+    {
+        id: 2,
+        name: "Марат Қасымов",
+        subject: {
+            kk: "Ағылшын тілі",
+            ru: "Английский язык", 
+            en: "English Language"
+        },
+        phone: "+7 702 234 56 78",
+        email: "marat@itlyceum.edu.kz",
+        experience: {
+            kk: "10 жыл",
+            ru: "10 лет",
+            en: "10 years"
+        },
+        degree: "MA",
+        bio: {
+            kk: "Тәжірибелі ағылшын тілі мұғалімі. Халықаралық сертификаттары бар.",
+            ru: "Опытный преподаватель английского языка. Имеет международные сертификаты.",
+            en: "Experienced English teacher. Has international certificates."
+        },
+        image: null
     }
 ];
 
@@ -168,6 +191,23 @@ const studentsData = [
             kk: ["Бірінші орын", "Ең үздік код"],
             ru: ["Первое место", "Лучший код"],
             en: ["First Place", "Best Code"]
+        },
+        image: null
+    },
+    {
+        id: 2,
+        name: "Айгерім Оразбай",
+        class: "11Б",
+        achievement: {
+            kk: "Қалалық математика олимпиадасының жеңімпазы",
+            ru: "Победитель городской математической олимпиады",
+            en: "Winner of City Mathematics Olympiad"
+        },
+        score: "4.8",
+        awards: {
+            kk: ["Алтын медаль", "Ең үздік шешім"],
+            ru: ["Золотая медаль", "Лучшее решение"],
+            en: ["Gold Medal", "Best Solution"]
         },
         image: null
     }
@@ -228,11 +268,11 @@ class Calendar {
 
         let calendarHTML = `
             <div class="calendar-header">
-                <button class="calendar-nav prev-month" data-action="prev">
+                <button class="calendar-nav prev-month" data-action="prev" type="button">
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="calendar-title">${t[this.currentMonth]} ${this.currentYear}</div>
-                <button class="calendar-nav next-month" data-action="next">
+                <button class="calendar-nav next-month" data-action="next" type="button">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
@@ -244,7 +284,7 @@ class Calendar {
         }
 
         for (let i = 0; i < startingDay; i++) {
-            calendarHTML += `<button class="calendar-day other-month">${new Date(this.currentYear, this.currentMonth, -i).getDate()}</button>`;
+            calendarHTML += `<button class="calendar-day other-month" type="button">${new Date(this.currentYear, this.currentMonth, -i).getDate()}</button>`;
         }
 
         const today = new Date();
@@ -257,22 +297,22 @@ class Calendar {
             if (isToday) dayClass += ' today';
             if (isSelected) dayClass += ' selected';
             
-            calendarHTML += `<button class="${dayClass}" data-day="${day}">${day}</button>`;
+            calendarHTML += `<button class="${dayClass}" data-day="${day}" type="button">${day}</button>`;
         }
 
         const totalCells = 42;
         const remainingCells = totalCells - (startingDay + daysInMonth);
         for (let i = 1; i <= remainingCells; i++) {
-            calendarHTML += `<button class="calendar-day other-month">${i}</button>`;
+            calendarHTML += `<button class="calendar-day other-month" type="button">${i}</button>`;
         }
 
         calendarHTML += `
             </div>
             <div class="calendar-actions">
-                <button class="btn btn-outline btn-sm" id="calendarToday">
+                <button class="btn btn-outline btn-sm" id="calendarToday" type="button">
                     ${currentLanguage === 'kk' ? 'Бүгін' : currentLanguage === 'ru' ? 'Сегодня' : 'Today'}
                 </button>
-                <button class="btn btn-primary btn-sm" id="calendarSelect">
+                <button class="btn btn-primary btn-sm" id="calendarSelect" type="button">
                     ${currentLanguage === 'kk' ? 'Таңдау' : currentLanguage === 'ru' ? 'Выбрать' : 'Select'}
                 </button>
             </div>
@@ -283,17 +323,25 @@ class Calendar {
 
     attachEventListeners() {
         const input = document.getElementById(this.inputId);
+        if (!input) return;
         
-        input.addEventListener('click', (e) => {
+        // Используем touchstart и click для поддержки всех устройств
+        const toggleCalendarHandler = (e) => {
             e.stopPropagation();
             this.toggleCalendar();
-        });
+        };
 
-        document.addEventListener('click', (e) => {
+        input.addEventListener('click', toggleCalendarHandler);
+        input.addEventListener('touchstart', toggleCalendarHandler);
+
+        const hideCalendarHandler = (e) => {
             if (!e.target.closest('.calendar-container')) {
                 this.hideCalendar();
             }
-        });
+        };
+
+        document.addEventListener('click', hideCalendarHandler);
+        document.addEventListener('touchstart', hideCalendarHandler);
 
         document.addEventListener('languageChanged', () => {
             this.updateCalendar();
@@ -301,43 +349,76 @@ class Calendar {
     }
 
     toggleCalendar() {
-        this.calendarDropdown.classList.toggle('show');
-        if (this.calendarDropdown.classList.contains('show')) {
-            this.updateCalendar();
+        if (this.calendarDropdown) {
+            this.calendarDropdown.classList.toggle('show');
+            if (this.calendarDropdown.classList.contains('show')) {
+                this.updateCalendar();
+            }
         }
     }
 
     hideCalendar() {
-        this.calendarDropdown.classList.remove('show');
+        if (this.calendarDropdown) {
+            this.calendarDropdown.classList.remove('show');
+        }
     }
 
     updateCalendar() {
-        this.calendarDropdown.innerHTML = this.getCalendarHTML();
-        this.attachCalendarEvents();
+        if (this.calendarDropdown) {
+            this.calendarDropdown.innerHTML = this.getCalendarHTML();
+            this.attachCalendarEvents();
+        }
     }
 
     attachCalendarEvents() {
-        this.calendarDropdown.querySelector('.prev-month').addEventListener('click', () => {
-            this.navigateMonth(-1);
-        });
+        const prevMonth = this.calendarDropdown?.querySelector('.prev-month');
+        const nextMonth = this.calendarDropdown?.querySelector('.next-month');
+        
+        if (prevMonth) {
+            prevMonth.addEventListener('click', () => this.navigateMonth(-1));
+            prevMonth.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.navigateMonth(-1);
+            });
+        }
+        
+        if (nextMonth) {
+            nextMonth.addEventListener('click', () => this.navigateMonth(1));
+            nextMonth.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.navigateMonth(1);
+            });
+        }
 
-        this.calendarDropdown.querySelector('.next-month').addEventListener('click', () => {
-            this.navigateMonth(1);
-        });
-
-        this.calendarDropdown.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
-            day.addEventListener('click', () => {
+        this.calendarDropdown?.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
+            const selectDayHandler = () => {
                 this.selectDay(parseInt(day.getAttribute('data-day')));
+            };
+            
+            day.addEventListener('click', selectDayHandler);
+            day.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                selectDayHandler();
             });
         });
 
-        this.calendarDropdown.querySelector('#calendarToday').addEventListener('click', () => {
-            this.selectToday();
-        });
+        const todayBtn = this.calendarDropdown?.querySelector('#calendarToday');
+        if (todayBtn) {
+            todayBtn.addEventListener('click', () => this.selectToday());
+            todayBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.selectToday();
+            });
+        }
 
-        this.calendarDropdown.querySelector('#calendarSelect').addEventListener('click', () => {
-            this.finalizeSelection();
-        });
+        const selectBtn = this.calendarDropdown?.querySelector('#calendarSelect');
+        if (selectBtn) {
+            selectBtn.addEventListener('click', () => this.finalizeSelection());
+            selectBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.finalizeSelection();
+            });
+        }
     }
 
     navigateMonth(direction) {
@@ -368,11 +449,13 @@ class Calendar {
     finalizeSelection() {
         if (this.selectedDate) {
             const input = document.getElementById(this.inputId);
-            const formattedDate = this.formatDate(this.selectedDate);
-            input.value = formattedDate;
-            this.hideCalendar();
-            
-            input.dispatchEvent(new Event('change', { bubbles: true }));
+            if (input) {
+                const formattedDate = this.formatDate(this.selectedDate);
+                input.value = formattedDate;
+                this.hideCalendar();
+                
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
         }
     }
 
@@ -387,6 +470,8 @@ class Calendar {
         if (!dateString) return '';
         
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        
         const formats = {
             kk: {
                 day: date.getDate(),
@@ -445,9 +530,17 @@ function createLinkField(linkData = { title: '', url: '' }) {
     `;
     
     const removeBtn = linkField.querySelector('.remove-link-btn');
-    removeBtn.addEventListener('click', function() {
+    // Улучшенная обработка событий для кнопки удаления
+    const removeLinkHandler = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         linkField.remove();
-    });
+    };
+    
+    removeBtn.addEventListener('click', removeLinkHandler);
+    removeBtn.addEventListener('touchstart', removeLinkHandler);
     
     return linkField;
 }
@@ -455,13 +548,16 @@ function createLinkField(linkData = { title: '', url: '' }) {
 // Функция для получения данных ссылок из формы
 function getLinksFromForm(containerId) {
     const links = [];
-    const linkFields = document.querySelectorAll(`#${containerId} .link-field`);
+    const container = document.getElementById(containerId);
+    if (!container) return links;
+    
+    const linkFields = container.querySelectorAll('.link-field');
     
     linkFields.forEach(field => {
         const titleInput = field.querySelector('[data-link-title]');
         const urlInput = field.querySelector('[data-link-url]');
         
-        if (titleInput.value.trim() && urlInput.value.trim()) {
+        if (titleInput && titleInput.value.trim() && urlInput && urlInput.value.trim()) {
             let url = urlInput.value.trim();
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
@@ -481,8 +577,9 @@ function getLinksFromForm(containerId) {
 function initializeMainApp() {
     console.log('Initializing main application...');
     
-    if (sidebarCollapsed) {
-        document.getElementById('sidebar').classList.add('collapsed');
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebarCollapsed) {
+        sidebar.classList.add('collapsed');
     }
     
     setupNavigation();
@@ -515,7 +612,9 @@ function updateUserInterface() {
 function toggleAdminFeatures(isAdmin) {
     const adminElements = document.querySelectorAll('.admin-only');
     adminElements.forEach(el => {
-        el.style.display = isAdmin ? 'block' : 'none';
+        if (el) {
+            el.style.display = isAdmin ? 'block' : 'none';
+        }
     });
     
     document.body.setAttribute('data-user-role', isAdmin ? 'admin' : 'user');
@@ -528,49 +627,72 @@ function setupMobileMenu() {
     const themeToggleMobile = document.getElementById('themeToggleMobile');
     const userBtnMobile = document.getElementById('userBtnMobile');
 
-    if (mobileMenuToggle && sidebar) {
-        mobileMenuToggle.addEventListener('click', function(e) {
+    // Улучшенная обработка мобильного меню
+    const toggleMobileMenu = (e) => {
+        if (e) {
+            e.preventDefault();
             e.stopPropagation();
+        }
+        if (sidebar && mobileMenuOverlay) {
             sidebar.classList.toggle('active');
             mobileMenuOverlay.classList.toggle('active');
             document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-        });
-    }
+        }
+    };
 
-    if (mobileMenuOverlay) {
-        mobileMenuOverlay.addEventListener('click', function() {
+    const closeMobileMenu = (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+        if (sidebar && mobileMenuOverlay) {
             sidebar.classList.remove('active');
             mobileMenuOverlay.classList.remove('active');
             document.body.style.overflow = '';
-        });
+        }
+    };
+
+    if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileMenuToggle.addEventListener('touchstart', toggleMobileMenu);
+    }
+
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('touchstart', closeMobileMenu);
     }
 
     if (themeToggleMobile) {
-        themeToggleMobile.addEventListener('click', function() {
+        const toggleThemeHandler = (e) => {
+            if (e) e.preventDefault();
             toggleTheme();
-        });
+        };
+        
+        themeToggleMobile.addEventListener('click', toggleThemeHandler);
+        themeToggleMobile.addEventListener('touchstart', toggleThemeHandler);
     }
 
     if (userBtnMobile) {
-        userBtnMobile.addEventListener('click', function() {
+        const loadProfile = (e) => {
+            if (e) e.preventDefault();
             loadPage('profile');
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                mobileMenuOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
+            closeMobileMenu();
+        };
+        
+        userBtnMobile.addEventListener('click', loadProfile);
+        userBtnMobile.addEventListener('touchstart', loadProfile);
     }
 
-    document.addEventListener('click', function(e) {
+    // Закрытие меню при клике на пункт меню
+    const closeMenuOnItemClick = (e) => {
         if (window.innerWidth <= 1024) {
-            if (e.target.closest('.menu-item') && sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                mobileMenuOverlay.classList.remove('active');
-                document.body.style.overflow = '';
+            if (e.target.closest('.menu-item') && sidebar && sidebar.classList.contains('active')) {
+                closeMobileMenu();
             }
         }
-    });
+    };
+
+    document.addEventListener('click', closeMenuOnItemClick);
+    document.addEventListener('touchstart', closeMenuOnItemClick);
 }
 
 function setupSidebar() {
@@ -578,11 +700,19 @@ function setupSidebar() {
     const sidebar = document.getElementById('sidebar');
 
     if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', function() {
+        const toggleSidebar = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
             if (window.innerWidth <= 1024) {
-                sidebar.classList.remove('active');
-                document.getElementById('mobileMenuOverlay').classList.remove('active');
-                document.body.style.overflow = '';
+                const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+                if (mobileMenuOverlay) {
+                    sidebar.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             } else {
                 sidebarCollapsed = !sidebarCollapsed;
                 
@@ -597,7 +727,10 @@ function setupSidebar() {
                     }, 400);
                 }, 10);
             }
-        });
+        };
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarToggle.addEventListener('touchstart', toggleSidebar);
         
         window.addEventListener('resize', function() {
             if (window.innerWidth <= 1024) {
@@ -625,19 +758,28 @@ function setupSidebar() {
 function setupNavigation() {
     const menuItems = document.querySelectorAll('.menu-item[data-page]');
     
+    const handleMenuItemClick = function(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Анимация нажатия
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 150);
+        
+        menuItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        
+        const pageId = this.getAttribute('data-page');
+        loadPage(pageId);
+    };
+    
     menuItems.forEach(item => {
-        item.addEventListener('click', function() {
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 150);
-            
-            menuItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            
-            const pageId = this.getAttribute('data-page');
-            loadPage(pageId);
-        });
+        item.addEventListener('click', handleMenuItemClick);
+        item.addEventListener('touchstart', handleMenuItemClick);
     });
     
     console.log('Navigation setup complete');
@@ -666,9 +808,13 @@ function setupTheme() {
     document.body.setAttribute('data-theme', savedTheme);
     
     if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
+        const toggleThemeHandler = (e) => {
+            if (e) e.preventDefault();
             toggleTheme();
-        });
+        };
+        
+        themeToggle.addEventListener('click', toggleThemeHandler);
+        themeToggle.addEventListener('touchstart', toggleThemeHandler);
     }
     
     console.log('Theme setup complete');
@@ -695,24 +841,39 @@ function setupLanguage() {
     const langDropdown = document.getElementById('langDropdown');
 
     if (langToggle && langDropdown) {
-        langToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
+        const toggleLangDropdown = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             langDropdown.classList.toggle('show');
-        });
+        };
 
-        document.addEventListener('click', function(e) {
+        langToggle.addEventListener('click', toggleLangDropdown);
+        langToggle.addEventListener('touchstart', toggleLangDropdown);
+
+        const closeLangDropdown = (e) => {
             if (!e.target.closest('.language-switcher')) {
                 langDropdown.classList.remove('show');
             }
-        });
+        };
+
+        document.addEventListener('click', closeLangDropdown);
+        document.addEventListener('touchstart', closeLangDropdown);
 
         document.querySelectorAll('.lang-option').forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const lang = this.getAttribute('data-lang');
+            const handleLangSelect = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                const lang = option.getAttribute('data-lang');
                 changeLanguage(lang);
                 langDropdown.classList.remove('show');
-            });
+            };
+            
+            option.addEventListener('click', handleLangSelect);
+            option.addEventListener('touchstart', handleLangSelect);
         });
     }
     
@@ -732,15 +893,34 @@ function changeLanguage(lang) {
         langText.textContent = lang.toUpperCase();
     }
     
+    // Обновление всех текстовых элементов с data-key
     document.querySelectorAll('[data-key]').forEach(element => {
         const key = element.getAttribute('data-key');
         const translations = {
+            // Навигация
             school: { kk: 'Мектеп туралы', ru: 'О школе', en: 'About School' },
             news: { kk: 'Жаңалықтар', ru: 'Новости', en: 'News' },
             teachers: { kk: 'Мұғалімдер', ru: 'Учителя', en: 'Teachers' },
             students: { kk: 'Оқушылар', ru: 'Ученики', en: 'Students' },
             events: { kk: 'Іс-шаралар', ru: 'Мероприятия', en: 'Events' },
-            profile: { kk: 'Жеке кабинет', ru: 'Личный кабинет', en: 'Profile' }
+            profile: { kk: 'Жеке кабинет', ru: 'Личный кабинет', en: 'Profile' },
+            
+            // Общие элементы
+            dashboard: { kk: 'Басқару панелі', ru: 'Панель управления', en: 'Dashboard' },
+            welcome: { kk: 'Қош келдіңіз', ru: 'Добро пожаловать', en: 'Welcome' },
+            search: { kk: 'Іздеу', ru: 'Поиск', en: 'Search' },
+            notifications: { kk: 'Хабарландырулар', ru: 'Уведомления', en: 'Notifications' },
+            settings: { kk: 'Баптаулар', ru: 'Настройки', en: 'Settings' },
+            
+            // Кнопки и действия
+            save: { kk: 'Сақтау', ru: 'Сохранить', en: 'Save' },
+            cancel: { kk: 'Болдырмау', ru: 'Отмена', en: 'Cancel' },
+            delete: { kk: 'Жою', ru: 'Удалить', en: 'Delete' },
+            edit: { kk: 'Өңдеу', ru: 'Редактировать', en: 'Edit' },
+            add: { kk: 'Қосу', ru: 'Добавить', en: 'Add' },
+            view: { kk: 'Қарау', ru: 'Просмотреть', en: 'View' },
+            download: { kk: 'Жүктеу', ru: 'Скачать', en: 'Download' },
+            upload: { kk: 'Жүктеу', ru: 'Загрузить', en: 'Upload' }
         };
         
         if (translations[key]) {
@@ -748,6 +928,7 @@ function changeLanguage(lang) {
         }
     });
     
+    // Обновление текста в форме авторизации
     const authTitle = document.getElementById('authTitle');
     const loginLabel = document.getElementById('loginLabel');
     const passwordLabel = document.getElementById('passwordLabel');
@@ -777,6 +958,7 @@ function changeLanguage(lang) {
 
 function loadPage(pageId) {
     const contentArea = document.getElementById('content');
+    if (!contentArea) return;
     
     contentArea.style.opacity = '0';
     contentArea.style.transform = 'translateY(10px)';
@@ -813,12 +995,38 @@ function getRandomColor() {
 }
 
 function getInitials(name) {
+    if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 }
 
 function showNotification(message, type = 'success') {
     if (window.authSystem) {
         window.authSystem.showNotification(message, type);
+    } else {
+        // Fallback notification
+        console.log(`${type}: ${message}`);
+        // Создаем простое уведомление
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: ${type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#10b981'};
+            color: white;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-family: system-ui, -apple-system, sans-serif;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
     }
 }
 
@@ -835,6 +1043,8 @@ function formatDateForDisplay(dateString) {
     if (!dateString) return '';
     
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    
     const formats = {
         kk: {
             day: date.getDate(),
@@ -863,23 +1073,16 @@ function showDetailModal(type, id) {
     
     if (type === 'news') {
         item = newsData.find(n => n.id === id);
-        if (item) {
-            title = item.title[currentLanguage] || item.title['kk'];
-            content = item.content[currentLanguage] || item.content['kk'];
-            date = formatDateForDisplay(item.date);
-            links = item.links || [];
-        }
     } else if (type === 'event') {
         item = eventsData.find(e => e.id === id);
-        if (item) {
-            title = item.title[currentLanguage] || item.title['kk'];
-            content = item.description[currentLanguage] || item.description['kk'];
-            date = formatDateForDisplay(item.date);
-            links = item.links || [];
-        }
     }
     
     if (!item) return;
+    
+    title = item.title?.[currentLanguage] || item.title?.['kk'] || 'No Title';
+    content = item.content?.[currentLanguage] || item.description?.[currentLanguage] || item.content?.['kk'] || item.description?.['kk'] || 'No Content';
+    date = formatDateForDisplay(item.date);
+    links = item.links || [];
     
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
@@ -887,7 +1090,7 @@ function showDetailModal(type, id) {
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">${title}</h2>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close" type="button">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-meta">
@@ -898,11 +1101,11 @@ function showDetailModal(type, id) {
                 </div>
                 ${item.banner ? `
                     <div class="modal-image">
-                        <img src="${item.banner}" alt="${title}">
+                        <img src="${item.banner}" alt="${title}" loading="lazy">
                     </div>
                 ` : item.image ? `
                     <div class="modal-image">
-                        <img src="${item.image}" alt="${title}">
+                        <img src="${item.image}" alt="${title}" loading="lazy">
                     </div>
                 ` : ''}
                 <div class="modal-text">
@@ -923,7 +1126,7 @@ function showDetailModal(type, id) {
                 ` : ''}
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary modal-ok-btn">
+                <button class="btn btn-primary modal-ok-btn" type="button">
                     <i class="fas fa-check"></i>
                     ${currentLanguage === 'kk' ? 'Түсіндім' : currentLanguage === 'ru' ? 'Понятно' : 'Got it'}
                 </button>
@@ -940,14 +1143,41 @@ function showDetailModal(type, id) {
     const closeModal = () => {
         modal.classList.remove('show');
         setTimeout(() => {
-            modal.remove();
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
         }, 300);
     };
     
-    modal.querySelector('.modal-close').addEventListener('click', closeModal);
-    modal.querySelector('.modal-ok-btn').addEventListener('click', closeModal);
+    // Улучшенная обработка закрытия модального окна
+    const closeBtn = modal.querySelector('.modal-close');
+    const okBtn = modal.querySelector('.modal-ok-btn');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+        closeBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            closeModal();
+        });
+    }
+    
+    if (okBtn) {
+        okBtn.addEventListener('click', closeModal);
+        okBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            closeModal();
+        });
+    }
+    
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
+    });
+    
+    modal.addEventListener('touchstart', (e) => {
+        if (e.target === modal) {
+            e.preventDefault();
+            closeModal();
+        }
     });
 }
 
@@ -973,7 +1203,8 @@ function getSchoolPage() {
             programming: "Бағдарламалау",
             webdev: "Веб-әзірлеу",
             databases: "Дерекқордар",
-            cybersecurity: "Киберқауіпсіздік"
+            cybersecurity: "Киберқауіпсіздік",
+            contacts: "Байланыс ақпараты"
         },
         ru: {
             title: "IT Lyceum School Hub",
@@ -994,7 +1225,8 @@ function getSchoolPage() {
             programming: "Программирование",
             webdev: "Веб-разработка",
             databases: "Базы данных", 
-            cybersecurity: "Кибербезопасность"
+            cybersecurity: "Кибербезопасность",
+            contacts: "Контактная информация"
         },
         en: {
             title: "IT Lyceum School Hub", 
@@ -1015,7 +1247,8 @@ function getSchoolPage() {
             programming: "Programming",
             webdev: "Web Development",
             databases: "Databases",
-            cybersecurity: "Cybersecurity"
+            cybersecurity: "Cybersecurity",
+            contacts: "Contact Information"
         }
     };
 
@@ -1029,6 +1262,7 @@ function getSchoolPage() {
                 <h2 class="card-title">${t.about}</h2>
                 <p>${t.aboutText}</p>
                 <div class="contact-info" style="margin-top: 1.5rem;">
+                    <h3>${t.contacts}</h3>
                     <p><strong>${t.address}:</strong> ${currentLanguage === 'kk' ? 'Көкшетау қаласы, Абай көшесі 123' : currentLanguage === 'ru' ? 'г. Кокшетау, ул. Абая 123' : 'Kokshetau city, Abay street 123'}</p>
                     <p><strong>${t.phone}:</strong> +7 (7162) 12-34-56</p>
                     <p><strong>${t.email}:</strong> info@itlyceum.edu.kz</p>
@@ -1080,7 +1314,7 @@ function getSchoolPage() {
                     </div>
                     <div class="stat-card">
                         <h3>${t.cybersecurity}</h3>
-                        <p>Қауіпсіздік негіздері</p>
+                        <p>${currentLanguage === 'kk' ? 'Қауіпсіздік негіздері' : currentLanguage === 'ru' ? 'Основы безопасности' : 'Security Fundamentals'}</p>
                     </div>
                 </div>
             </div>
@@ -1111,7 +1345,12 @@ function getNewsPage() {
             addLink: "Сілтеме қосу",
             linkTitle: "Сілтеме атауы",
             linkUrl: "URL мекенжайы",
-            removeLink: "Жою"
+            removeLink: "Жою",
+            noImage: "Сурет жоқ",
+            dragImage: "Суретті тартып апарыңыз немесе басыңыз",
+            dragBanner: "150x200 өлшеміндегі сурет",
+            additionalMaterials: "Қосымша материалдар:",
+            more: "тағы"
         },
         ru: {
             title: "Новости", 
@@ -1131,7 +1370,12 @@ function getNewsPage() {
             addLink: "Добавить ссылку",
             linkTitle: "Название ссылки",
             linkUrl: "URL адрес",
-            removeLink: "Удалить"
+            removeLink: "Удалить",
+            noImage: "Изображение отсутствует",
+            dragImage: "Перетащите изображение или нажмите",
+            dragBanner: "Изображение размером 150x200",
+            additionalMaterials: "Дополнительные материалы:",
+            more: "еще"
         },
         en: {
             title: "News",
@@ -1151,7 +1395,12 @@ function getNewsPage() {
             addLink: "Add Link",
             linkTitle: "Link Title",
             linkUrl: "URL Address",
-            removeLink: "Remove"
+            removeLink: "Remove",
+            noImage: "No Image",
+            dragImage: "Drag and drop image or click",
+            dragBanner: "Image sized 150x200",
+            additionalMaterials: "Additional Materials:",
+            more: "more"
         }
     };
 
@@ -1165,7 +1414,7 @@ function getNewsPage() {
             <div class="card" style="margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="card-title">${t.addNews}</h2>
-                    <button class="btn btn-primary" id="showNewsFormBtn">
+                    <button class="btn btn-primary" id="showNewsFormBtn" type="button">
                         <i class="fas fa-plus"></i>
                         ${t.addButton}
                     </button>
@@ -1206,7 +1455,7 @@ function getNewsPage() {
                                 <input type="file" id="newsImageInput" accept="image/*">
                                 <label for="newsImageInput" class="file-upload-label">
                                     <span>${t.imageLabel}</span>
-                                    <small>${currentLanguage === 'kk' ? 'Суретті тартып апарыңыз немесе басыңыз' : currentLanguage === 'ru' ? 'Перетащите изображение или нажмите' : 'Drag and drop image or click'}</small>
+                                    <small>${t.dragImage}</small>
                                 </label>
                                 <img class="file-preview" id="newsImagePreview">
                             </div>
@@ -1217,19 +1466,19 @@ function getNewsPage() {
                                 <input type="file" id="newsBannerInput" accept="image/*">
                                 <label for="newsBannerInput" class="file-upload-label">
                                     <span>${t.bannerLabel}</span>
-                                    <small>${currentLanguage === 'kk' ? '150x200 өлшеміндегі сурет' : currentLanguage === 'ru' ? 'Изображение размером 150x200' : 'Image sized 150x200'}</small>
+                                    <small>${t.dragBanner}</small>
                                 </label>
                                 <img class="banner-preview" id="newsBannerPreview">
                             </div>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="btn btn-primary btn-compact" id="addNewsBtn">
+                        <button class="btn btn-primary btn-compact" id="addNewsBtn" type="button">
                             <i class="fas fa-plus"></i>
                             <span class="btn-text">${t.addButton}</span>
                             <div class="btn-loader"></div>
                         </button>
-                        <button class="btn btn-outline btn-compact" id="cancelNewsBtn">
+                        <button class="btn btn-outline btn-compact" id="cancelNewsBtn" type="button">
                             <i class="fas fa-times"></i>
                             ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
                         </button>
@@ -1239,17 +1488,17 @@ function getNewsPage() {
             ` : ''}
             
             <div class="news-grid">
-                ${newsData.map(news => `
+                ${newsData.length > 0 ? newsData.map(news => `
                     <div class="news-item" data-id="${news.id}">
-                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${news.id}" data-type="news">×</button>` : ''}
+                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${news.id}" data-type="news" type="button">×</button>` : ''}
                         
                         ${news.banner ? `
-                            <img src="${news.banner}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}">
+                            <img src="${news.banner}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}" loading="lazy">
                         ` : news.image ? `
-                            <img src="${news.image}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}">
+                            <img src="${news.image}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}" loading="lazy">
                         ` : `
                             <div class="news-banner">
-                                <span>${currentLanguage === 'kk' ? 'Сурет жоқ' : currentLanguage === 'ru' ? 'Изображение отсутствует' : 'No Image'}</span>
+                                <span>${t.noImage}</span>
                             </div>
                         `}
                         
@@ -1267,7 +1516,7 @@ function getNewsPage() {
                             <div class="news-links" style="margin-bottom: 1rem;">
                                 <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                                     <i class="fas fa-link"></i> 
-                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                    ${t.additionalMaterials}
                                 </div>
                                 <div class="links-preview">
                                     ${news.links.slice(0, 2).map(link => `
@@ -1277,20 +1526,26 @@ function getNewsPage() {
                                         </a>
                                     `).join('')}
                                     ${news.links.length > 2 ? `
-                                        <span class="more-links">+${news.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                        <span class="more-links">+${news.links.length - 2} ${t.more}</span>
                                     ` : ''}
                                 </div>
                             </div>
                         ` : ''}
                         
                         <div class="card-actions">
-                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${news.id}" data-type="news">
+                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${news.id}" data-type="news" type="button">
                                 <i class="fas fa-book-open"></i>
                                 ${t.readMore}
                             </button>
                         </div>
                     </div>
-                `).join('')}
+                `).join('') : `
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>${currentLanguage === 'kk' ? 'Жаңалықтар жоқ' : currentLanguage === 'ru' ? 'Новостей нет' : 'No news available'}</h3>
+                        <p>${currentLanguage === 'kk' ? 'Әзірге ешқандай жаңалық жоқ' : currentLanguage === 'ru' ? 'Пока нет новостей' : 'There are no news yet'}</p>
+                    </div>
+                `}
             </div>
         </div>
     `;
@@ -1307,7 +1562,9 @@ function getTeachersPage() {
             contact: "Байланысу",
             experience: "тәжірибе",
             phone: "Телефон",
-            email: "Электронды пошта"
+            email: "Электронды пошта",
+            degree: "дәреже",
+            bio: "қысқаша мәлімет"
         },
         ru: {
             title: "Учителя",
@@ -1316,7 +1573,9 @@ function getTeachersPage() {
             contact: "Связаться", 
             experience: "опыт",
             phone: "Телефон",
-            email: "Электронная почта"
+            email: "Электронная почта",
+            degree: "степень",
+            bio: "краткая информация"
         },
         en: {
             title: "Teachers",
@@ -1325,7 +1584,9 @@ function getTeachersPage() {
             contact: "Contact",
             experience: "experience", 
             phone: "Phone",
-            email: "Email"
+            email: "Email",
+            degree: "degree",
+            bio: "brief information"
         }
     };
 
@@ -1338,9 +1599,9 @@ function getTeachersPage() {
             <div class="card">
                 <h2 class="card-title">${t.filter}</h2>
                 <div class="filter-buttons">
-                    <button class="filter-btn active" data-subject="all">${t.all}</button>
+                    <button class="filter-btn active" data-subject="all" type="button">${t.all}</button>
                     ${subjects.map(subject => `
-                        <button class="filter-btn" data-subject="${subject}">${subject}</button>
+                        <button class="filter-btn" data-subject="${subject}" type="button">${subject}</button>
                     `).join('')}
                 </div>
             </div>
@@ -1349,7 +1610,7 @@ function getTeachersPage() {
                 ${teachersData.map(teacher => `
                     <div class="teacher-card" data-subject="${teacher.subject[currentLanguage] || teacher.subject['kk']}">
                         ${teacher.image ? `
-                            <img src="${teacher.image}" alt="${teacher.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;">
+                            <img src="${teacher.image}" alt="${teacher.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;" loading="lazy">
                         ` : `
                             <div style="width: 80px; height: 80px; background: ${getRandomColor()}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.25rem; margin: 0 auto 1rem;">
                                 ${getInitials(teacher.name)}
@@ -1360,8 +1621,12 @@ function getTeachersPage() {
                         
                         <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">${teacher.subject[currentLanguage] || teacher.subject['kk']}</p>
                         
-                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.25rem;"><i class="fas fa-graduation-cap"></i> ${teacher.degree}</p>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;"><i class="fas fa-clock"></i> ${teacher.experience[currentLanguage] || teacher.experience['kk']} ${t.experience}</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            <i class="fas fa-graduation-cap"></i> ${teacher.degree} (${t.degree})
+                        </p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                            <i class="fas fa-clock"></i> ${teacher.experience[currentLanguage] || teacher.experience['kk']} ${t.experience}
+                        </p>
                         
                         <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.4;">
                             ${teacher.bio[currentLanguage] || teacher.bio['kk']}
@@ -1376,7 +1641,7 @@ function getTeachersPage() {
                             </p>
                         </div>
                         
-                        <button class="btn btn-outline btn-animated contact-teacher-btn" data-teacher="${teacher.name}" style="margin-top: 1rem;">
+                        <button class="btn btn-outline btn-animated contact-teacher-btn" data-teacher="${teacher.name}" style="margin-top: 1rem;" type="button">
                             <i class="fas fa-comments"></i>
                             ${t.contact}
                         </button>
@@ -1399,7 +1664,8 @@ function getStudentsPage() {
             averageScore: "Орташа балл",
             class: "Сынып",
             achievement: "Жетістік",
-            awards: "Марапаттар"
+            awards: "Марапаттар",
+            score: "Балл"
         },
         ru: {
             title: "Ученики",
@@ -1411,7 +1677,8 @@ function getStudentsPage() {
             averageScore: "Средний балл",
             class: "Класс",
             achievement: "Достижение", 
-            awards: "Награды"
+            awards: "Награды",
+            score: "Балл"
         },
         en: {
             title: "Students",
@@ -1423,7 +1690,8 @@ function getStudentsPage() {
             averageScore: "Average Score", 
             class: "Class",
             achievement: "Achievement",
-            awards: "Awards"
+            awards: "Awards",
+            score: "Score"
         }
     };
 
@@ -1461,7 +1729,7 @@ function getStudentsPage() {
                     ${studentsData.map(student => `
                         <div class="student-card">
                             ${student.image ? `
-                                <img src="${student.image}" alt="${student.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;">
+                                <img src="${student.image}" alt="${student.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;" loading="lazy">
                             ` : `
                                 <div style="width: 80px; height: 80px; background: ${getRandomColor()}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.25rem; margin: 0 auto 1rem;">
                                     ${getInitials(student.name)}
@@ -1475,7 +1743,7 @@ function getStudentsPage() {
                             </p>
                             
                             <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">
-                                <strong><i class="fas fa-star"></i> ${currentLanguage === 'kk' ? 'Балл' : currentLanguage === 'ru' ? 'Балл' : 'Score'}:</strong> ${student.score}
+                                <strong><i class="fas fa-star"></i> ${t.score}:</strong> ${student.score}
                             </p>
                             
                             <p style="color: var(--text-secondary); margin-bottom: 1rem;">
@@ -1525,7 +1793,12 @@ function getEventsPage() {
             addLink: "Сілтеме қосу",
             linkTitle: "Сілтеме атауы",
             linkUrl: "URL мекенжайы",
-            removeLink: "Жою"
+            removeLink: "Жою",
+            noImage: "Сурет жоқ",
+            dragImage: "Суретті тартып апарыңыз немесе басыңыз",
+            dragBanner: "150x200 өлшеміндегі сурет",
+            additionalMaterials: "Қосымша материалдар:",
+            more: "тағы"
         },
         ru: {
             title: "Мероприятия",
@@ -1546,7 +1819,12 @@ function getEventsPage() {
             addLink: "Добавить ссылку",
             linkTitle: "Название ссылки",
             linkUrl: "URL адрес",
-            removeLink: "Удалить"
+            removeLink: "Удалить",
+            noImage: "Изображение отсутствует",
+            dragImage: "Перетащите изображение или нажмите",
+            dragBanner: "Изображение размером 150x200",
+            additionalMaterials: "Дополнительные материалы:",
+            more: "еще"
         },
         en: {
             title: "Events",
@@ -1567,7 +1845,12 @@ function getEventsPage() {
             addLink: "Add Link",
             linkTitle: "Link Title",
             linkUrl: "URL Address",
-            removeLink: "Remove"
+            removeLink: "Remove",
+            noImage: "No Image",
+            dragImage: "Drag and drop image or click",
+            dragBanner: "Image sized 150x200",
+            additionalMaterials: "Additional Materials:",
+            more: "more"
         }
     };
 
@@ -1581,7 +1864,7 @@ function getEventsPage() {
             <div class="card" style="margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="card-title">${t.addEvent}</h2>
-                    <button class="btn btn-primary" id="showEventFormBtn">
+                    <button class="btn btn-primary" id="showEventFormBtn" type="button">
                         <i class="fas fa-plus"></i>
                         ${t.addButton}
                     </button>
@@ -1622,7 +1905,7 @@ function getEventsPage() {
                                 <input type="file" id="eventImageInput" accept="image/*">
                                 <label for="eventImageInput" class="file-upload-label">
                                     <span>${t.imageLabel}</span>
-                                    <small>${currentLanguage === 'kk' ? 'Суретті тартып апарыңыз немесе басыңыз' : currentLanguage === 'ru' ? 'Перетащите изображение или нажмите' : 'Drag and drop image or click'}</small>
+                                    <small>${t.dragImage}</small>
                                 </label>
                                 <img class="file-preview" id="eventImagePreview">
                             </div>
@@ -1633,19 +1916,19 @@ function getEventsPage() {
                                 <input type="file" id="eventBannerInput" accept="image/*">
                                 <label for="eventBannerInput" class="file-upload-label">
                                     <span>${t.bannerLabel}</span>
-                                    <small>${currentLanguage === 'kk' ? '150x200 өлшеміндегі сурет' : currentLanguage === 'ru' ? 'Изображение размером 150x200' : 'Image sized 150x200'}</small>
+                                    <small>${t.dragBanner}</small>
                                 </label>
                                 <img class="banner-preview" id="eventBannerPreview">
                             </div>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="btn btn-primary btn-compact" id="addEventBtn">
+                        <button class="btn btn-primary btn-compact" id="addEventBtn" type="button">
                             <i class="fas fa-plus"></i>
                             <span class="btn-text">${t.addButton}</span>
                             <div class="btn-loader"></div>
                         </button>
-                        <button class="btn btn-outline btn-compact" id="cancelEventBtn">
+                        <button class="btn btn-outline btn-compact" id="cancelEventBtn" type="button">
                             <i class="fas fa-times"></i>
                             ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
                         </button>
@@ -1655,17 +1938,17 @@ function getEventsPage() {
             ` : ''}
             
             <div class="events-grid">
-                ${eventsData.map(event => `
+                ${eventsData.length > 0 ? eventsData.map(event => `
                     <div class="event-item" data-id="${event.id}">
-                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${event.id}" data-type="event">×</button>` : ''}
+                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${event.id}" data-type="event" type="button">×</button>` : ''}
                         
                         ${event.banner ? `
-                            <img src="${event.banner}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}">
+                            <img src="${event.banner}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}" loading="lazy">
                         ` : event.image ? `
-                            <img src="${event.image}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}">
+                            <img src="${event.image}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}" loading="lazy">
                         ` : `
                             <div class="event-banner">
-                                <span>${currentLanguage === 'kk' ? 'Сурет жоқ' : currentLanguage === 'ru' ? 'Изображение отсутствует' : 'No Image'}</span>
+                                <span>${t.noImage}</span>
                             </div>
                         `}
                         
@@ -1683,7 +1966,7 @@ function getEventsPage() {
                             <div class="event-links" style="margin-bottom: 1rem;">
                                 <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                                     <i class="fas fa-link"></i> 
-                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                    ${t.additionalMaterials}
                                 </div>
                                 <div class="links-preview">
                                     ${event.links.slice(0, 2).map(link => `
@@ -1693,24 +1976,30 @@ function getEventsPage() {
                                         </a>
                                     `).join('')}
                                     ${event.links.length > 2 ? `
-                                        <span class="more-links">+${event.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                        <span class="more-links">+${event.links.length - 2} ${t.more}</span>
                                     ` : ''}
                                 </div>
                             </div>
                         ` : ''}
                         
                         <div class="card-actions">
-                            <button class="btn btn-primary btn-animated participate-event-btn" data-id="${event.id}">
+                            <button class="btn btn-primary btn-animated participate-event-btn" data-id="${event.id}" type="button">
                                 <i class="fas fa-user-plus"></i>
                                 ${t.participate}
                             </button>
-                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${event.id}" data-type="event">
+                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${event.id}" data-type="event" type="button">
                                 <i class="fas fa-info-circle"></i>
                                 ${t.readMore}
                             </button>
                         </div>
                     </div>
-                `).join('')}
+                `).join('') : `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>${currentLanguage === 'kk' ? 'Іс-шаралар жоқ' : currentLanguage === 'ru' ? 'Мероприятий нет' : 'No events available'}</h3>
+                        <p>${currentLanguage === 'kk' ? 'Әзірге ешқандай іс-шара жоқ' : currentLanguage === 'ru' ? 'Пока нет мероприятий' : 'There are no events yet'}</p>
+                    </div>
+                `}
             </div>
         </div>
     `;
@@ -1739,7 +2028,9 @@ function getProfilePage() {
             teacherFeatures: "Сізге мына функциялар қол жетімді:",
             studentPanel: "Оқушы панелі",
             studentFeatures: "Сізге мына функциялар қол жетімді:",
-            yourClass: "Сыныбыңыз"
+            yourClass: "Сыныбыңыз",
+            personalInfo: "Жеке ақпарат",
+            systemSettings: "Жүйе баптаулары"
         },
         ru: {
             title: "Личный кабинет",
@@ -1760,7 +2051,9 @@ function getProfilePage() {
             teacherFeatures: "Вам доступны следующие функции:",
             studentPanel: "Панель ученика",
             studentFeatures: "Вам доступны следующие функции:",
-            yourClass: "Ваш класс"
+            yourClass: "Ваш класс",
+            personalInfo: "Личная информация",
+            systemSettings: "Настройки системы"
         },
         en: {
             title: "Profile",
@@ -1781,7 +2074,9 @@ function getProfilePage() {
             teacherFeatures: "You have access to the following functions:",
             studentPanel: "Student Panel",
             studentFeatures: "You have access to the following functions:",
-            yourClass: "Your class"
+            yourClass: "Your class",
+            personalInfo: "Personal Information",
+            systemSettings: "System Settings"
         }
     };
 
@@ -1858,7 +2153,7 @@ function getProfilePage() {
                         </span>
                     </div>
                     ${!currentUser?.role ? `
-                        <button class="btn btn-primary btn-sm select-role-btn">
+                        <button class="btn btn-primary btn-sm select-role-btn" type="button">
                             <i class="fas fa-check"></i>
                             ${t.selectRole}
                         </button>
@@ -1881,7 +2176,7 @@ function getProfilePage() {
                         <label>${t.confirmPassword}</label>
                         <input type="password" id="confirmPassword" class="form-input" placeholder="${t.confirmPassword}">
                     </div>
-                    <button class="btn btn-primary btn-animated" id="changePasswordBtn">
+                    <button class="btn btn-primary btn-animated" id="changePasswordBtn" type="button">
                         <i class="fas fa-key"></i>
                         <span class="btn-text">${t.changeButton}</span>
                         <div class="btn-loader"></div>
@@ -1891,7 +2186,7 @@ function getProfilePage() {
 
             <div class="card">
                 <div class="logout-section">
-                    <button class="btn btn-danger btn-full" id="logoutBtnProfile">
+                    <button class="btn btn-danger btn-full" id="logoutBtnProfile" type="button">
                         <i class="fas fa-sign-out-alt"></i>
                         ${t.logout}
                     </button>
@@ -2004,23 +2299,35 @@ function initializeNewsPage() {
         const cancelNewsBtn = document.getElementById('cancelNewsBtn');
         
         if (showNewsFormBtn && newsFormPanel) {
-            showNewsFormBtn.addEventListener('click', function() {
+            const toggleNewsForm = (e) => {
+                if (e) e.preventDefault();
                 newsFormPanel.style.display = newsFormPanel.style.display === 'none' ? 'block' : 'none';
-            });
+            };
+            
+            showNewsFormBtn.addEventListener('click', toggleNewsForm);
+            showNewsFormBtn.addEventListener('touchstart', toggleNewsForm);
         }
         
         if (cancelNewsBtn && newsFormPanel) {
-            cancelNewsBtn.addEventListener('click', function() {
+            const cancelNewsForm = (e) => {
+                if (e) e.preventDefault();
                 newsFormPanel.style.display = 'none';
-            });
+            };
+            
+            cancelNewsBtn.addEventListener('click', cancelNewsForm);
+            cancelNewsBtn.addEventListener('touchstart', cancelNewsForm);
         }
         
         const addNewsLinkBtn = document.getElementById('addNewsLinkBtn');
         if (addNewsLinkBtn) {
-            addNewsLinkBtn.addEventListener('click', function() {
+            const addLinkHandler = (e) => {
+                if (e) e.preventDefault();
                 const linkField = createLinkField();
                 document.getElementById('newsLinksContainer').appendChild(linkField);
-            });
+            };
+            
+            addNewsLinkBtn.addEventListener('click', addLinkHandler);
+            addNewsLinkBtn.addEventListener('touchstart', addLinkHandler);
         }
         
         const addNewsBtn = document.getElementById('addNewsBtn');
@@ -2030,12 +2337,14 @@ function initializeNewsPage() {
         const newsBannerPreview = document.getElementById('newsBannerPreview');
         
         if (addNewsBtn) {
-            addNewsBtn.addEventListener('click', async function() {
-                const title = document.getElementById('newsTitle').value.trim();
-                const content = document.getElementById('newsContent').value.trim();
-                const date = document.getElementById('newsDate').value.trim();
-                const imageFile = newsImageInput.files[0];
-                const bannerFile = newsBannerInput.files[0];
+            const addNewsHandler = async (e) => {
+                if (e) e.preventDefault();
+                
+                const title = document.getElementById('newsTitle')?.value.trim();
+                const content = document.getElementById('newsContent')?.value.trim();
+                const date = document.getElementById('newsDate')?.value.trim();
+                const imageFile = newsImageInput?.files[0];
+                const bannerFile = newsBannerInput?.files[0];
                 
                 const links = getLinksFromForm('newsLinksContainer');
                 
@@ -2061,7 +2370,7 @@ function initializeNewsPage() {
                     return;
                 }
                 
-                this.classList.add('loading');
+                addNewsBtn.classList.add('loading');
                 
                 const newNews = {
                     id: Date.now(),
@@ -2090,15 +2399,20 @@ function initializeNewsPage() {
                     newsData.unshift(newNews);
                     localStorage.setItem('newsData', JSON.stringify(newsData));
                     
+                    // Сброс формы
                     document.getElementById('newsTitle').value = '';
                     document.getElementById('newsContent').value = '';
                     document.getElementById('newsDate').value = '';
-                    newsImageInput.value = '';
-                    newsBannerInput.value = '';
-                    newsImagePreview.style.display = 'none';
-                    newsImagePreview.src = '';
-                    newsBannerPreview.style.display = 'none';
-                    newsBannerPreview.src = '';
+                    if (newsImageInput) newsImageInput.value = '';
+                    if (newsBannerInput) newsBannerInput.value = '';
+                    if (newsImagePreview) {
+                        newsImagePreview.style.display = 'none';
+                        newsImagePreview.src = '';
+                    }
+                    if (newsBannerPreview) {
+                        newsBannerPreview.style.display = 'none';
+                        newsBannerPreview.src = '';
+                    }
                     document.getElementById('newsLinksContainer').innerHTML = '';
                     newsFormPanel.style.display = 'none';
                     
@@ -2108,11 +2422,15 @@ function initializeNewsPage() {
                 } catch (error) {
                     showNotification('Суретті жүктеу кезінде қате пайда болды!', 'error');
                 } finally {
-                    this.classList.remove('loading');
+                    addNewsBtn.classList.remove('loading');
                 }
-            });
+            };
+            
+            addNewsBtn.addEventListener('click', addNewsHandler);
+            addNewsBtn.addEventListener('touchstart', addNewsHandler);
         }
         
+        // Обработчики для предпросмотра изображений
         if (newsImageInput && newsImagePreview) {
             newsImageInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
@@ -2144,18 +2462,30 @@ function initializeNewsPage() {
         }
     }
     
+    // Улучшенные обработчики для кнопок новостей
     document.querySelectorAll('.read-more-btn[data-type="news"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const newsId = parseInt(this.getAttribute('data-id'));
+        const handleReadMore = (e) => {
+            if (e) e.preventDefault();
+            const newsId = parseInt(btn.getAttribute('data-id'));
             readMoreNews(newsId);
-        });
+        };
+        
+        btn.addEventListener('click', handleReadMore);
+        btn.addEventListener('touchstart', handleReadMore);
     });
     
     document.querySelectorAll('.delete-btn[data-type="news"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const newsId = parseInt(this.getAttribute('data-id'));
+        const handleDelete = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const newsId = parseInt(btn.getAttribute('data-id'));
             deleteNews(newsId);
-        });
+        };
+        
+        btn.addEventListener('click', handleDelete);
+        btn.addEventListener('touchstart', handleDelete);
     });
 }
 
@@ -2164,11 +2494,13 @@ function initializeTeachersPage() {
     const teacherCards = document.querySelectorAll('.teacher-card');
     
     filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+        const handleFilter = (e) => {
+            if (e) e.preventDefault();
             
-            const subject = this.getAttribute('data-subject');
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const subject = btn.getAttribute('data-subject');
             
             teacherCards.forEach(card => {
                 if (subject === 'all' || card.getAttribute('data-subject') === subject) {
@@ -2179,14 +2511,21 @@ function initializeTeachersPage() {
                     setTimeout(() => card.style.display = 'none', 300);
                 }
             });
-        });
+        };
+        
+        btn.addEventListener('click', handleFilter);
+        btn.addEventListener('touchstart', handleFilter);
     });
     
     document.querySelectorAll('.contact-teacher-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const teacherName = this.getAttribute('data-teacher');
+        const handleContact = (e) => {
+            if (e) e.preventDefault();
+            const teacherName = btn.getAttribute('data-teacher');
             contactTeacher(teacherName);
-        });
+        };
+        
+        btn.addEventListener('click', handleContact);
+        btn.addEventListener('touchstart', handleContact);
     });
 }
 
@@ -2205,23 +2544,35 @@ function initializeEventsPage() {
         const cancelEventBtn = document.getElementById('cancelEventBtn');
         
         if (showEventFormBtn && eventFormPanel) {
-            showEventFormBtn.addEventListener('click', function() {
+            const toggleEventForm = (e) => {
+                if (e) e.preventDefault();
                 eventFormPanel.style.display = eventFormPanel.style.display === 'none' ? 'block' : 'none';
-            });
+            };
+            
+            showEventFormBtn.addEventListener('click', toggleEventForm);
+            showEventFormBtn.addEventListener('touchstart', toggleEventForm);
         }
         
         if (cancelEventBtn && eventFormPanel) {
-            cancelEventBtn.addEventListener('click', function() {
+            const cancelEventForm = (e) => {
+                if (e) e.preventDefault();
                 eventFormPanel.style.display = 'none';
-            });
+            };
+            
+            cancelEventBtn.addEventListener('click', cancelEventForm);
+            cancelEventBtn.addEventListener('touchstart', cancelEventForm);
         }
         
         const addEventLinkBtn = document.getElementById('addEventLinkBtn');
         if (addEventLinkBtn) {
-            addEventLinkBtn.addEventListener('click', function() {
+            const addLinkHandler = (e) => {
+                if (e) e.preventDefault();
                 const linkField = createLinkField();
                 document.getElementById('eventLinksContainer').appendChild(linkField);
-            });
+            };
+            
+            addEventLinkBtn.addEventListener('click', addLinkHandler);
+            addEventLinkBtn.addEventListener('touchstart', addLinkHandler);
         }
         
         const addEventBtn = document.getElementById('addEventBtn');
@@ -2231,12 +2582,14 @@ function initializeEventsPage() {
         const eventBannerPreview = document.getElementById('eventBannerPreview');
         
         if (addEventBtn) {
-            addEventBtn.addEventListener('click', async function() {
-                const title = document.getElementById('eventTitle').value.trim();
-                const description = document.getElementById('eventDescription').value.trim();
-                const date = document.getElementById('eventDate').value.trim();
-                const imageFile = eventImageInput.files[0];
-                const bannerFile = eventBannerInput.files[0];
+            const addEventHandler = async (e) => {
+                if (e) e.preventDefault();
+                
+                const title = document.getElementById('eventTitle')?.value.trim();
+                const description = document.getElementById('eventDescription')?.value.trim();
+                const date = document.getElementById('eventDate')?.value.trim();
+                const imageFile = eventImageInput?.files[0];
+                const bannerFile = eventBannerInput?.files[0];
                 
                 const links = getLinksFromForm('eventLinksContainer');
                 
@@ -2262,7 +2615,7 @@ function initializeEventsPage() {
                     return;
                 }
                 
-                this.classList.add('loading');
+                addEventBtn.classList.add('loading');
                 
                 const newEvent = {
                     id: Date.now(),
@@ -2291,15 +2644,20 @@ function initializeEventsPage() {
                     eventsData.unshift(newEvent);
                     localStorage.setItem('eventsData', JSON.stringify(eventsData));
                     
+                    // Сброс формы
                     document.getElementById('eventTitle').value = '';
                     document.getElementById('eventDescription').value = '';
                     document.getElementById('eventDate').value = '';
-                    eventImageInput.value = '';
-                    eventBannerInput.value = '';
-                    eventImagePreview.style.display = 'none';
-                    eventImagePreview.src = '';
-                    eventBannerPreview.style.display = 'none';
-                    eventBannerPreview.src = '';
+                    if (eventImageInput) eventImageInput.value = '';
+                    if (eventBannerInput) eventBannerInput.value = '';
+                    if (eventImagePreview) {
+                        eventImagePreview.style.display = 'none';
+                        eventImagePreview.src = '';
+                    }
+                    if (eventBannerPreview) {
+                        eventBannerPreview.style.display = 'none';
+                        eventBannerPreview.src = '';
+                    }
                     document.getElementById('eventLinksContainer').innerHTML = '';
                     eventFormPanel.style.display = 'none';
                     
@@ -2309,11 +2667,15 @@ function initializeEventsPage() {
                 } catch (error) {
                     showNotification('Суретті жүктеу кезінде қате пайда болды!', 'error');
                 } finally {
-                    this.classList.remove('loading');
+                    addEventBtn.classList.remove('loading');
                 }
-            });
+            };
+            
+            addEventBtn.addEventListener('click', addEventHandler);
+            addEventBtn.addEventListener('touchstart', addEventHandler);
         }
         
+        // Обработчики для предпросмотра изображений
         if (eventImageInput && eventImagePreview) {
             eventImageInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
@@ -2345,25 +2707,41 @@ function initializeEventsPage() {
         }
     }
     
+    // Улучшенные обработчики для кнопок событий
     document.querySelectorAll('.participate-event-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const eventId = parseInt(this.getAttribute('data-id'));
+        const handleParticipate = (e) => {
+            if (e) e.preventDefault();
+            const eventId = parseInt(btn.getAttribute('data-id'));
             participateInEvent(eventId);
-        });
+        };
+        
+        btn.addEventListener('click', handleParticipate);
+        btn.addEventListener('touchstart', handleParticipate);
     });
     
     document.querySelectorAll('.read-more-btn[data-type="event"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const eventId = parseInt(this.getAttribute('data-id'));
+        const handleReadMore = (e) => {
+            if (e) e.preventDefault();
+            const eventId = parseInt(btn.getAttribute('data-id'));
             showDetailModal('event', eventId);
-        });
+        };
+        
+        btn.addEventListener('click', handleReadMore);
+        btn.addEventListener('touchstart', handleReadMore);
     });
     
     document.querySelectorAll('.delete-btn[data-type="event"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const eventId = parseInt(this.getAttribute('data-id'));
+        const handleDelete = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const eventId = parseInt(btn.getAttribute('data-id'));
             deleteEvent(eventId);
-        });
+        };
+        
+        btn.addEventListener('click', handleDelete);
+        btn.addEventListener('touchstart', handleDelete);
     });
 }
 
@@ -2372,7 +2750,9 @@ function initializeProfilePage() {
     
     const selectRoleBtn = document.querySelector('.select-role-btn');
     if (selectRoleBtn) {
-        selectRoleBtn.addEventListener('click', function() {
+        const handleRoleSelect = (e) => {
+            if (e) e.preventDefault();
+            
             const roles = ['Адмін', 'Мұғалім', 'Оқушы'];
             const currentRole = currentUser?.role;
             const currentIndex = roles.indexOf(currentRole);
@@ -2393,12 +2773,17 @@ function initializeProfilePage() {
                 
                 showNotification(t, 'success');
             }
-        });
+        };
+        
+        selectRoleBtn.addEventListener('click', handleRoleSelect);
+        selectRoleBtn.addEventListener('touchstart', handleRoleSelect);
     }
 
     const logoutBtnProfile = document.getElementById('logoutBtnProfile');
     if (logoutBtnProfile) {
-        logoutBtnProfile.addEventListener('click', function() {
+        const handleLogout = (e) => {
+            if (e) e.preventDefault();
+            
             const confirmMessages = {
                 kk: 'Шынымен жүйеден шыққыңыз келе ме?',
                 ru: 'Вы действительно хотите выйти из системы?',
@@ -2408,15 +2793,20 @@ function initializeProfilePage() {
             if (confirm(confirmMessages[currentLanguage] || confirmMessages['kk'])) {
                 window.authSystem.logout();
             }
-        });
+        };
+        
+        logoutBtnProfile.addEventListener('click', handleLogout);
+        logoutBtnProfile.addEventListener('touchstart', handleLogout);
     }
 
     const changePasswordBtn = document.getElementById('changePasswordBtn');
     if (changePasswordBtn) {
-        changePasswordBtn.addEventListener('click', function() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        const handlePasswordChange = (e) => {
+            if (e) e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword')?.value;
+            const newPassword = document.getElementById('newPassword')?.value;
+            const confirmPassword = document.getElementById('confirmPassword')?.value;
             
             const t = currentLanguage === 'kk' ? {
                 allFields: "Барлық өрістерді толтырыңыз!",
@@ -2442,7 +2832,7 @@ function initializeProfilePage() {
                 return;
             }
             
-            this.classList.add('loading');
+            changePasswordBtn.classList.add('loading');
             
             setTimeout(() => {
                 showNotification(t.changed);
@@ -2451,9 +2841,12 @@ function initializeProfilePage() {
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
                 
-                this.classList.remove('loading');
+                changePasswordBtn.classList.remove('loading');
             }, 1500);
-        });
+        };
+        
+        changePasswordBtn.addEventListener('click', handlePasswordChange);
+        changePasswordBtn.addEventListener('touchstart', handlePasswordChange);
     }
 }
 
@@ -2472,258 +2865,7 @@ window.getLinksFromForm = getLinksFromForm;
 
 console.log('Application initialized successfully!');
 
-// Добавляем стили для модального окна и ссылок
-const modalStyles = document.createElement('style');
-modalStyles.textContent = `
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        padding: 1rem;
-        backdrop-filter: blur(5px);
-    }
-
-    .modal-overlay.show {
-        opacity: 1;
-    }
-
-    .modal-content {
-        background: var(--bg-primary);
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        max-width: 600px;
-        width: 100%;
-        max-height: 90vh;
-        overflow: hidden;
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-        border: 1px solid var(--border);
-        backdrop-filter: blur(10px);
-    }
-
-    .modal-overlay.show .modal-content {
-        transform: scale(1);
-    }
-
-    .modal-header {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid var(--border);
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        position: relative;
-    }
-
-    .modal-title {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        line-height: 1.3;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 1.25rem;
-        transition: background 0.2s ease;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .modal-close:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .modal-body {
-        padding: 2rem;
-        max-height: 60vh;
-        overflow-y: auto;
-    }
-
-    .modal-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .modal-date {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-    }
-
-    .modal-date i {
-        color: var(--primary);
-    }
-
-    .modal-image {
-        margin-bottom: 1.5rem;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-image img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    .modal-text {
-        line-height: 1.7;
-        color: var(--text-primary);
-        font-size: 1rem;
-    }
-
-    .modal-text p {
-        margin-bottom: 1rem;
-    }
-
-    .modal-text p:last-child {
-        margin-bottom: 0;
-    }
-
-    .modal-links {
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border);
-    }
-
-    .modal-links h4 {
-        margin-bottom: 1rem;
-        color: var(--text-primary);
-        font-size: 1.125rem;
-    }
-
-    .modal-links h4 i {
-        color: var(--primary);
-        margin-right: 0.5rem;
-    }
-
-    .links-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .link-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        background: var(--bg-secondary);
-        border-radius: 8px;
-        color: var(--text-primary);
-        text-decoration: none;
-        transition: background 0.2s ease;
-        border: 1px solid var(--border);
-    }
-
-    .link-item:hover {
-        background: var(--primary-light);
-        color: var(--primary);
-        text-decoration: none;
-    }
-
-    .link-item i {
-        color: var(--primary);
-        font-size: 0.875rem;
-    }
-
-    .modal-footer {
-        padding: 1.5rem 2rem;
-        border-top: 1px solid var(--border);
-        background: var(--bg-secondary);
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .modal-ok-btn {
-        min-width: 120px;
-    }
-
-    .links-preview {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .link-preview {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        background: var(--bg-secondary);
-        border-radius: 6px;
-        color: var(--text-primary);
-        text-decoration: none;
-        font-size: 0.75rem;
-        transition: background 0.2s ease;
-        border: 1px solid var(--border);
-    }
-
-    .link-preview:hover {
-        background: var(--primary-light);
-        color: var(--primary);
-        text-decoration: none;
-    }
-
-    .link-preview i {
-        color: var(--primary);
-        font-size: 0.7rem;
-    }
-
-    .more-links {
-        font-size: 0.7rem;
-        color: var(--text-secondary);
-        font-style: italic;
-        padding: 0.25rem 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .modal-content {
-            margin: 1rem;
-            max-height: 85vh;
-        }
-
-        .modal-header {
-            padding: 1.25rem 1.5rem;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-footer {
-            padding: 1.25rem 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
         }
     }
-`;
 document.head.appendChild(modalStyles);
+

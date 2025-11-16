@@ -25,7 +25,9 @@
                 </div>
                 <p id="authTitle">Жүйеге кіру</p>
             </div>
-            <div class="auth-form">
+            
+            <!-- Login Form -->
+            <div class="auth-form" id="loginForm">
                 <div class="input-group">
                     <input type="text" id="loginInput" placeholder=" " class="form-input">
                     <label class="input-label" id="loginLabel">Логин</label>
@@ -38,6 +40,11 @@
                     <span class="btn-text" id="loginBtnText">Кіру</span>
                     <div class="btn-loader"></div>
                 </button>
+                
+                <div class="auth-switch">
+                    <span>Тіркелгіңіз жоқ па?</span>
+                    <button id="switchToRegister" class="link-btn">Тіркелу</button>
+                </div>
                 
                 <div class="demo-accounts">
                     <div class="demo-title">Демо аккаунттар:</div>
@@ -215,3 +222,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

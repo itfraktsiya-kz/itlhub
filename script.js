@@ -192,11 +192,9 @@ class Calendar {
         const input = document.getElementById(this.inputId);
         if (!input) return;
 
-        // Create calendar container
         const calendarContainer = document.createElement('div');
         calendarContainer.className = 'calendar-container';
         
-        // Create calendar dropdown
         const calendarDropdown = document.createElement('div');
         calendarDropdown.className = 'calendar-dropdown';
         calendarDropdown.innerHTML = this.getCalendarHTML();
@@ -241,17 +239,14 @@ class Calendar {
             <div class="calendar-grid">
         `;
 
-        // Weekdays
         for (let i = 0; i < 7; i++) {
             calendarHTML += `<div class="calendar-weekday">${w[i]}</div>`;
         }
 
-        // Empty cells for previous month
         for (let i = 0; i < startingDay; i++) {
             calendarHTML += `<button class="calendar-day other-month">${new Date(this.currentYear, this.currentMonth, -i).getDate()}</button>`;
         }
 
-        // Current month days
         const today = new Date();
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(this.currentYear, this.currentMonth, day);
@@ -265,7 +260,6 @@ class Calendar {
             calendarHTML += `<button class="${dayClass}" data-day="${day}">${day}</button>`;
         }
 
-        // Empty cells for next month
         const totalCells = 42;
         const remainingCells = totalCells - (startingDay + daysInMonth);
         for (let i = 1; i <= remainingCells; i++) {
@@ -290,20 +284,17 @@ class Calendar {
     attachEventListeners() {
         const input = document.getElementById(this.inputId);
         
-        // Show calendar on input click
         input.addEventListener('click', (e) => {
             e.stopPropagation();
             this.toggleCalendar();
         });
 
-        // Close calendar when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.calendar-container')) {
                 this.hideCalendar();
             }
         });
 
-        // Update calendar when language changes
         document.addEventListener('languageChanged', () => {
             this.updateCalendar();
         });
@@ -326,7 +317,6 @@ class Calendar {
     }
 
     attachCalendarEvents() {
-        // Month navigation
         this.calendarDropdown.querySelector('.prev-month').addEventListener('click', () => {
             this.navigateMonth(-1);
         });
@@ -335,19 +325,16 @@ class Calendar {
             this.navigateMonth(1);
         });
 
-        // Day selection
         this.calendarDropdown.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
             day.addEventListener('click', () => {
                 this.selectDay(parseInt(day.getAttribute('data-day')));
             });
         });
 
-        // Today button
         this.calendarDropdown.querySelector('#calendarToday').addEventListener('click', () => {
             this.selectToday();
         });
 
-        // Select button
         this.calendarDropdown.querySelector('#calendarSelect').addEventListener('click', () => {
             this.finalizeSelection();
         });
@@ -492,9 +479,8 @@ function getLinksFromForm(containerId) {
 
 // Initialize main application
 function initializeMainApp() {
-    console.log('🚀 Initializing main application...');
+    console.log('Initializing main application...');
     
-    // Apply saved sidebar state
     if (sidebarCollapsed) {
         document.getElementById('sidebar').classList.add('collapsed');
     }
@@ -568,7 +554,6 @@ function setupMobileMenu() {
     if (userBtnMobile) {
         userBtnMobile.addEventListener('click', function() {
             loadPage('profile');
-            // Close mobile menu if open
             if (sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 mobileMenuOverlay.classList.remove('active');
@@ -577,7 +562,6 @@ function setupMobileMenu() {
         });
     }
 
-    // Close sidebar when menu item is clicked on mobile
     document.addEventListener('click', function(e) {
         if (window.innerWidth <= 1024) {
             if (e.target.closest('.menu-item') && sidebar.classList.contains('active')) {
@@ -596,12 +580,10 @@ function setupSidebar() {
     if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', function() {
             if (window.innerWidth <= 1024) {
-                // On mobile, close sidebar instead of collapsing
                 sidebar.classList.remove('active');
                 document.getElementById('mobileMenuOverlay').classList.remove('active');
                 document.body.style.overflow = '';
             } else {
-                // On desktop, toggle collapse
                 sidebarCollapsed = !sidebarCollapsed;
                 
                 sidebar.classList.add('animating');
@@ -631,14 +613,13 @@ function setupSidebar() {
             }
         });
 
-        // Initialize on load
         if (window.innerWidth <= 1024) {
             sidebar.classList.add('mobile');
             sidebar.style.transform = 'translateX(-100%)';
         }
     }
     
-    console.log('✅ Sidebar setup complete');
+    console.log('Sidebar setup complete');
 }
 
 function setupNavigation() {
@@ -646,7 +627,6 @@ function setupNavigation() {
     
     menuItems.forEach(item => {
         item.addEventListener('click', function() {
-            // Add click animation
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = '';
@@ -660,7 +640,7 @@ function setupNavigation() {
         });
     });
     
-    console.log('✅ Navigation setup complete');
+    console.log('Navigation setup complete');
 }
 
 function updateBreadcrumb(pageId) {
@@ -691,7 +671,7 @@ function setupTheme() {
         });
     }
     
-    console.log('✅ Theme setup complete');
+    console.log('Theme setup complete');
 }
 
 function toggleTheme() {
@@ -736,11 +716,11 @@ function setupLanguage() {
         });
     }
     
-    console.log('✅ Language setup complete');
+    console.log('Language setup complete');
 }
 
 function setupLogout() {
-    console.log('✅ Logout available only in profile page');
+    console.log('Logout available only in profile page');
 }
 
 function changeLanguage(lang) {
@@ -822,7 +802,7 @@ function loadPage(pageId) {
             initializePage(pageId);
         }
         
-        console.log(`📄 Loaded page: ${pageId}`);
+        console.log(`Loaded page: ${pageId}`);
     }, 200);
 }
 
@@ -971,7 +951,7 @@ function showDetailModal(type, id) {
     });
 }
 
-// Page templates with modern design
+// Page templates
 function getSchoolPage() {
     const translations = {
         kk: {
@@ -1049,10 +1029,10 @@ function getSchoolPage() {
                 <h2 class="card-title">${t.about}</h2>
                 <p>${t.aboutText}</p>
                 <div class="contact-info" style="margin-top: 1.5rem;">
-                    <p><strong>📍 ${t.address}:</strong> ${currentLanguage === 'kk' ? 'Көкшетау қаласы, Абай көшесі 123' : currentLanguage === 'ru' ? 'г. Кокшетау, ул. Абая 123' : 'Kokshetau city, Abay street 123'}</p>
-                    <p><strong>📞 ${t.phone}:</strong> +7 (7162) 12-34-56</p>
-                    <p><strong>📧 ${t.email}:</strong> info@itlyceum.edu.kz</p>
-                    <p><strong>🌐 ${t.website}:</strong> www.itlyceum.edu.kz</p>
+                    <p><strong>${t.address}:</strong> ${currentLanguage === 'kk' ? 'Көкшетау қаласы, Абай көшесі 123' : currentLanguage === 'ru' ? 'г. Кокшетау, ул. Абая 123' : 'Kokshetau city, Abay street 123'}</p>
+                    <p><strong>${t.phone}:</strong> +7 (7162) 12-34-56</p>
+                    <p><strong>${t.email}:</strong> info@itlyceum.edu.kz</p>
+                    <p><strong>${t.website}:</strong> www.itlyceum.edu.kz</p>
                 </div>
             </div>
             
@@ -1087,19 +1067,19 @@ function getSchoolPage() {
                 <h2 class="card-title">${t.directions}</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>🎯 ${t.programming}</h3>
+                        <h3>${t.programming}</h3>
                         <p>Python, Java, C++</p>
                     </div>
                     <div class="stat-card">
-                        <h3>🌐 ${t.webdev}</h3>
+                        <h3>${t.webdev}</h3>
                         <p>HTML, CSS, JavaScript</p>
                     </div>
                     <div class="stat-card">
-                        <h3>💾 ${t.databases}</h3>
+                        <h3>${t.databases}</h3>
                         <p>SQL, MySQL, PostgreSQL</p>
                     </div>
                     <div class="stat-card">
-                        <h3>🔒 ${t.cybersecurity}</h3>
+                        <h3>${t.cybersecurity}</h3>
                         <p>Қауіпсіздік негіздері</p>
                     </div>
                 </div>
@@ -1108,8 +1088,818 @@ function getSchoolPage() {
     `;
 }
 
-// Остальные функции getNewsPage(), getTeachersPage(), getStudentsPage(), getEventsPage(), getProfilePage()
-// и вспомогательные функции остаются такими же как в предыдущем коде, но с адаптацией для мобильных устройств
+function getNewsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Адмін';
+
+    const translations = {
+        kk: {
+            title: "Жаңалықтар",
+            addNews: "Жаңалық қосу",
+            titleLabel: "Атауы",
+            contentLabel: "Сипаттама", 
+            dateLabel: "Күні",
+            imageLabel: "Сурет",
+            bannerLabel: "Банер (150x200)",
+            addButton: "Қосу",
+            readMore: "Толығырақ",
+            allFields: "Барлық өрістерді толтырыңыз!",
+            newsAdded: "Жаңалық сәтті қосылды!",
+            newsDeleted: "Жаңалық жойылды!",
+            toggleForm: "Жаңалық қосу формасы",
+            linksLabel: "Сілтемелер",
+            addLink: "Сілтеме қосу",
+            linkTitle: "Сілтеме атауы",
+            linkUrl: "URL мекенжайы",
+            removeLink: "Жою"
+        },
+        ru: {
+            title: "Новости", 
+            addNews: "Добавить новость",
+            titleLabel: "Название",
+            contentLabel: "Описание",
+            dateLabel: "Дата", 
+            imageLabel: "Изображение",
+            bannerLabel: "Баннер (150x200)",
+            addButton: "Добавить",
+            readMore: "Подробнее",
+            allFields: "Заполните все поля!",
+            newsAdded: "Новость успешно добавлена!",
+            newsDeleted: "Новость удалена!",
+            toggleForm: "Форма добавления новости",
+            linksLabel: "Ссылки",
+            addLink: "Добавить ссылку",
+            linkTitle: "Название ссылки",
+            linkUrl: "URL адрес",
+            removeLink: "Удалить"
+        },
+        en: {
+            title: "News",
+            addNews: "Add News", 
+            titleLabel: "Title",
+            contentLabel: "Description",
+            dateLabel: "Date",
+            imageLabel: "Image",
+            bannerLabel: "Banner (150x200)", 
+            addButton: "Add",
+            readMore: "Read More",
+            allFields: "Please fill all fields!",
+            newsAdded: "News successfully added!",
+            newsDeleted: "News deleted!",
+            toggleForm: "Add News Form",
+            linksLabel: "Links",
+            addLink: "Add Link",
+            linkTitle: "Link Title",
+            linkUrl: "URL Address",
+            removeLink: "Remove"
+        }
+    };
+
+    const t = translations[currentLanguage] || translations.kk;
+    
+    return `
+        <div class="page">
+            <h1 class="page-title">${t.title}</h1>
+            
+            ${isAdmin ? `
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="card-title">${t.addNews}</h2>
+                    <button class="btn btn-primary" id="showNewsFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addButton}
+                    </button>
+                </div>
+            </div>
+
+            <div class="card admin-panel-compact" id="newsFormPanel" style="display: none; margin-bottom: 2rem;">
+                <div class="admin-panel-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${t.titleLabel} *</label>
+                            <input type="text" id="newsTitle" class="form-input" placeholder="${t.titleLabel}">
+                        </div>
+                        <div class="form-group">
+                            <label>${t.dateLabel} *</label>
+                            <input type="text" id="newsDate" class="form-input calendar-input" placeholder="${t.dateLabel}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>${t.contentLabel} *</label>
+                        <textarea id="newsContent" class="form-input" rows="3" placeholder="${t.contentLabel}"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>${t.linksLabel}</label>
+                        <div id="newsLinksContainer">
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="addNewsLinkBtn">
+                            <i class="fas fa-plus"></i>
+                            ${t.addLink}
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${t.imageLabel}</label>
+                            <div class="file-upload" id="newsFileUpload">
+                                <input type="file" id="newsImageInput" accept="image/*">
+                                <label for="newsImageInput" class="file-upload-label">
+                                    <span>${t.imageLabel}</span>
+                                    <small>${currentLanguage === 'kk' ? 'Суретті тартып апарыңыз немесе басыңыз' : currentLanguage === 'ru' ? 'Перетащите изображение или нажмите' : 'Drag and drop image or click'}</small>
+                                </label>
+                                <img class="file-preview" id="newsImagePreview">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>${t.bannerLabel}</label>
+                            <div class="banner-upload" id="newsBannerUpload">
+                                <input type="file" id="newsBannerInput" accept="image/*">
+                                <label for="newsBannerInput" class="file-upload-label">
+                                    <span>${t.bannerLabel}</span>
+                                    <small>${currentLanguage === 'kk' ? '150x200 өлшеміндегі сурет' : currentLanguage === 'ru' ? 'Изображение размером 150x200' : 'Image sized 150x200'}</small>
+                                </label>
+                                <img class="banner-preview" id="newsBannerPreview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-compact" id="addNewsBtn">
+                            <i class="fas fa-plus"></i>
+                            <span class="btn-text">${t.addButton}</span>
+                            <div class="btn-loader"></div>
+                        </button>
+                        <button class="btn btn-outline btn-compact" id="cancelNewsBtn">
+                            <i class="fas fa-times"></i>
+                            ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+            
+            <div class="news-grid">
+                ${newsData.map(news => `
+                    <div class="news-item" data-id="${news.id}">
+                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${news.id}" data-type="news">×</button>` : ''}
+                        
+                        ${news.banner ? `
+                            <img src="${news.banner}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}">
+                        ` : news.image ? `
+                            <img src="${news.image}" class="news-banner" alt="${news.title[currentLanguage] || news.title['kk']}">
+                        ` : `
+                            <div class="news-banner">
+                                <span>${currentLanguage === 'kk' ? 'Сурет жоқ' : currentLanguage === 'ru' ? 'Изображение отсутствует' : 'No Image'}</span>
+                            </div>
+                        `}
+                        
+                        <div style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem;">
+                            <i class="fas fa-calendar-alt"></i> ${formatDateForDisplay(news.date)}
+                        </div>
+                        
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">${news.title[currentLanguage] || news.title['kk']}</h3>
+                        
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary); line-height: 1.6;">
+                            ${(news.content[currentLanguage] || news.content['kk']).length > 150 ? (news.content[currentLanguage] || news.content['kk']).substring(0, 150) + '...' : (news.content[currentLanguage] || news.content['kk'])}
+                        </p>
+                        
+                        ${news.links && news.links.length > 0 ? `
+                            <div class="news-links" style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    <i class="fas fa-link"></i> 
+                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                </div>
+                                <div class="links-preview">
+                                    ${news.links.slice(0, 2).map(link => `
+                                        <a href="${link.url}" target="_blank" class="link-preview" title="${link.title}">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            ${link.title.length > 30 ? link.title.substring(0, 30) + '...' : link.title}
+                                        </a>
+                                    `).join('')}
+                                    ${news.links.length > 2 ? `
+                                        <span class="more-links">+${news.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card-actions">
+                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${news.id}" data-type="news">
+                                <i class="fas fa-book-open"></i>
+                                ${t.readMore}
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function getTeachersPage() {
+    const subjects = [...new Set(teachersData.map(teacher => teacher.subject[currentLanguage] || teacher.subject['kk']))];
+    
+    const translations = {
+        kk: {
+            title: "Мұғалімдер",
+            filter: "Пән бойынша сүзгілеу",
+            all: "Барлығы",
+            contact: "Байланысу",
+            experience: "тәжірибе",
+            phone: "Телефон",
+            email: "Электронды пошта"
+        },
+        ru: {
+            title: "Учителя",
+            filter: "Фильтр по предметам",
+            all: "Все",
+            contact: "Связаться", 
+            experience: "опыт",
+            phone: "Телефон",
+            email: "Электронная почта"
+        },
+        en: {
+            title: "Teachers",
+            filter: "Filter by Subject",
+            all: "All",
+            contact: "Contact",
+            experience: "experience", 
+            phone: "Phone",
+            email: "Email"
+        }
+    };
+
+    const t = translations[currentLanguage] || translations.kk;
+
+    return `
+        <div class="page">
+            <h1 class="page-title">${t.title}</h1>
+            
+            <div class="card">
+                <h2 class="card-title">${t.filter}</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-subject="all">${t.all}</button>
+                    ${subjects.map(subject => `
+                        <button class="filter-btn" data-subject="${subject}">${subject}</button>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="teachers-grid">
+                ${teachersData.map(teacher => `
+                    <div class="teacher-card" data-subject="${teacher.subject[currentLanguage] || teacher.subject['kk']}">
+                        ${teacher.image ? `
+                            <img src="${teacher.image}" alt="${teacher.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;">
+                        ` : `
+                            <div style="width: 80px; height: 80px; background: ${getRandomColor()}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.25rem; margin: 0 auto 1rem;">
+                                ${getInitials(teacher.name)}
+                            </div>
+                        `}
+                        
+                        <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">${teacher.name}</h3>
+                        
+                        <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">${teacher.subject[currentLanguage] || teacher.subject['kk']}</p>
+                        
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.25rem;"><i class="fas fa-graduation-cap"></i> ${teacher.degree}</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;"><i class="fas fa-clock"></i> ${teacher.experience[currentLanguage] || teacher.experience['kk']} ${t.experience}</p>
+                        
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.4;">
+                            ${teacher.bio[currentLanguage] || teacher.bio['kk']}
+                        </p>
+                        
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                                <i class="fas fa-phone"></i> ${t.phone}: ${teacher.phone}
+                            </p>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                                <i class="fas fa-envelope"></i> ${t.email}: ${teacher.email}
+                            </p>
+                        </div>
+                        
+                        <button class="btn btn-outline btn-animated contact-teacher-btn" data-teacher="${teacher.name}" style="margin-top: 1rem;">
+                            <i class="fas fa-comments"></i>
+                            ${t.contact}
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function getStudentsPage() {
+    const translations = {
+        kk: {
+            title: "Оқушылар",
+            statistics: "Статистика",
+            topStudents: "Үздік оқушылар",
+            allStudents: "Оқушы",
+            girls: "Қыздар", 
+            boys: "Ұлдар",
+            averageScore: "Орташа балл",
+            class: "Сынып",
+            achievement: "Жетістік",
+            awards: "Марапаттар"
+        },
+        ru: {
+            title: "Ученики",
+            statistics: "Статистика",
+            topStudents: "Лучшие ученики",
+            allStudents: "Учеников",
+            girls: "Девочки",
+            boys: "Мальчики",
+            averageScore: "Средний балл",
+            class: "Класс",
+            achievement: "Достижение", 
+            awards: "Награды"
+        },
+        en: {
+            title: "Students",
+            statistics: "Statistics",
+            topStudents: "Top Students",
+            allStudents: "Students",
+            girls: "Girls",
+            boys: "Boys",
+            averageScore: "Average Score", 
+            class: "Class",
+            achievement: "Achievement",
+            awards: "Awards"
+        }
+    };
+
+    const t = translations[currentLanguage] || translations.kk;
+
+    return `
+        <div class="page">
+            <h1 class="page-title">${t.title}</h1>
+            
+            <div class="card">
+                <h2 class="card-title">${t.statistics}</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>524</h3>
+                        <p>${t.allStudents}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>186</h3>
+                        <p>${t.girls}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>338</h3>
+                        <p>${t.boys}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>4.7</h3>
+                        <p>${t.averageScore}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">${t.topStudents}</h2>
+                <div class="students-grid">
+                    ${studentsData.map(student => `
+                        <div class="student-card">
+                            ${student.image ? `
+                                <img src="${student.image}" alt="${student.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem;">
+                            ` : `
+                                <div style="width: 80px; height: 80px; background: ${getRandomColor()}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.25rem; margin: 0 auto 1rem;">
+                                    ${getInitials(student.name)}
+                                </div>
+                            `}
+                            
+                            <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">${student.name}</h3>
+                            
+                            <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">
+                                <strong><i class="fas fa-users"></i> ${t.class}:</strong> ${student.class}
+                            </p>
+                            
+                            <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">
+                                <strong><i class="fas fa-star"></i> ${currentLanguage === 'kk' ? 'Балл' : currentLanguage === 'ru' ? 'Балл' : 'Score'}:</strong> ${student.score}
+                            </p>
+                            
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                <strong><i class="fas fa-trophy"></i> ${t.achievement}:</strong> ${student.achievement[currentLanguage] || student.achievement['kk']}
+                            </p>
+                            
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                                ${student.awards[currentLanguage] ? student.awards[currentLanguage].map(award => `
+                                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                                        ${award}
+                                    </span>
+                                `).join('') : student.awards['kk'].map(award => `
+                                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                                        ${award}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getEventsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Адмін';
+
+    const translations = {
+        kk: {
+            title: "Іс-шаралар",
+            addEvent: "Іс-шара қосу",
+            titleLabel: "Атауы",
+            descriptionLabel: "Сипаттама",
+            dateLabel: "Күні",
+            imageLabel: "Сурет",
+            bannerLabel: "Банер (150x200)",
+            addButton: "Қосу",
+            participate: "Қатысу",
+            readMore: "Толығырақ",
+            allFields: "Барлық өрістерді толтырыңыз!",
+            eventAdded: "Іс-шара сәтті қосылды!",
+            eventDeleted: "Іс-шара жойылды!",
+            toggleForm: "Іс-шара қосу формасы",
+            linksLabel: "Сілтемелер",
+            addLink: "Сілтеме қосу",
+            linkTitle: "Сілтеме атауы",
+            linkUrl: "URL мекенжайы",
+            removeLink: "Жою"
+        },
+        ru: {
+            title: "Мероприятия",
+            addEvent: "Добавить мероприятие",
+            titleLabel: "Название",
+            descriptionLabel: "Описание",
+            dateLabel: "Дата",
+            imageLabel: "Изображение",
+            bannerLabel: "Баннер (150x200)",
+            addButton: "Добавить",
+            participate: "Участвовать",
+            readMore: "Подробнее",
+            allFields: "Заполните все поля!",
+            eventAdded: "Мероприятие успешно добавлено!",
+            eventDeleted: "Мероприятие удалено!",
+            toggleForm: "Форма добавления мероприятия",
+            linksLabel: "Ссылки",
+            addLink: "Добавить ссылку",
+            linkTitle: "Название ссылки",
+            linkUrl: "URL адрес",
+            removeLink: "Удалить"
+        },
+        en: {
+            title: "Events",
+            addEvent: "Add Event",
+            titleLabel: "Title",
+            descriptionLabel: "Description",
+            dateLabel: "Date",
+            imageLabel: "Image",
+            bannerLabel: "Banner (150x200)",
+            addButton: "Add",
+            participate: "Participate",
+            readMore: "Read More",
+            allFields: "Please fill all fields!",
+            eventAdded: "Event successfully added!",
+            eventDeleted: "Event deleted!",
+            toggleForm: "Add Event Form",
+            linksLabel: "Links",
+            addLink: "Add Link",
+            linkTitle: "Link Title",
+            linkUrl: "URL Address",
+            removeLink: "Remove"
+        }
+    };
+
+    const t = translations[currentLanguage] || translations.kk;
+
+    return `
+        <div class="page">
+            <h1 class="page-title">${t.title}</h1>
+            
+            ${isAdmin ? `
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 class="card-title">${t.addEvent}</h2>
+                    <button class="btn btn-primary" id="showEventFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addButton}
+                    </button>
+                </div>
+            </div>
+
+            <div class="card admin-panel-compact" id="eventFormPanel" style="display: none; margin-bottom: 2rem;">
+                <div class="admin-panel-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${t.titleLabel} *</label>
+                            <input type="text" id="eventTitle" class="form-input" placeholder="${t.titleLabel}">
+                        </div>
+                        <div class="form-group">
+                            <label>${t.dateLabel} *</label>
+                            <input type="text" id="eventDate" class="form-input calendar-input" placeholder="${t.dateLabel}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>${t.descriptionLabel} *</label>
+                        <textarea id="eventDescription" class="form-input" rows="3" placeholder="${t.descriptionLabel}"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>${t.linksLabel}</label>
+                        <div id="eventLinksContainer">
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="addEventLinkBtn">
+                            <i class="fas fa-plus"></i>
+                            ${t.addLink}
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>${t.imageLabel}</label>
+                            <div class="file-upload" id="eventFileUpload">
+                                <input type="file" id="eventImageInput" accept="image/*">
+                                <label for="eventImageInput" class="file-upload-label">
+                                    <span>${t.imageLabel}</span>
+                                    <small>${currentLanguage === 'kk' ? 'Суретті тартып апарыңыз немесе басыңыз' : currentLanguage === 'ru' ? 'Перетащите изображение или нажмите' : 'Drag and drop image or click'}</small>
+                                </label>
+                                <img class="file-preview" id="eventImagePreview">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>${t.bannerLabel}</label>
+                            <div class="banner-upload" id="eventBannerUpload">
+                                <input type="file" id="eventBannerInput" accept="image/*">
+                                <label for="eventBannerInput" class="file-upload-label">
+                                    <span>${t.bannerLabel}</span>
+                                    <small>${currentLanguage === 'kk' ? '150x200 өлшеміндегі сурет' : currentLanguage === 'ru' ? 'Изображение размером 150x200' : 'Image sized 150x200'}</small>
+                                </label>
+                                <img class="banner-preview" id="eventBannerPreview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-compact" id="addEventBtn">
+                            <i class="fas fa-plus"></i>
+                            <span class="btn-text">${t.addButton}</span>
+                            <div class="btn-loader"></div>
+                        </button>
+                        <button class="btn btn-outline btn-compact" id="cancelEventBtn">
+                            <i class="fas fa-times"></i>
+                            ${currentLanguage === 'kk' ? 'Болдырмау' : currentLanguage === 'ru' ? 'Отмена' : 'Cancel'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+            
+            <div class="events-grid">
+                ${eventsData.map(event => `
+                    <div class="event-item" data-id="${event.id}">
+                        ${isAdmin ? `<button class="delete-btn admin-only" data-id="${event.id}" data-type="event">×</button>` : ''}
+                        
+                        ${event.banner ? `
+                            <img src="${event.banner}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}">
+                        ` : event.image ? `
+                            <img src="${event.image}" class="event-banner" alt="${event.title[currentLanguage] || event.title['kk']}">
+                        ` : `
+                            <div class="event-banner">
+                                <span>${currentLanguage === 'kk' ? 'Сурет жоқ' : currentLanguage === 'ru' ? 'Изображение отсутствует' : 'No Image'}</span>
+                            </div>
+                        `}
+                        
+                        <div style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem;">
+                            <i class="fas fa-calendar-alt"></i> ${formatDateForDisplay(event.date)}
+                        </div>
+                        
+                        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">${event.title[currentLanguage] || event.title['kk']}</h3>
+                        
+                        <p style="margin-bottom: 1.5rem; color: var(--text-secondary); line-height: 1.6;">
+                            ${(event.description[currentLanguage] || event.description['kk']).length > 150 ? (event.description[currentLanguage] || event.description['kk']).substring(0, 150) + '...' : (event.description[currentLanguage] || event.description['kk'])}
+                        </p>
+                        
+                        ${event.links && event.links.length > 0 ? `
+                            <div class="event-links" style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    <i class="fas fa-link"></i> 
+                                    ${currentLanguage === 'kk' ? 'Қосымша материалдар:' : currentLanguage === 'ru' ? 'Дополнительные материалы:' : 'Additional Materials:'}
+                                </div>
+                                <div class="links-preview">
+                                    ${event.links.slice(0, 2).map(link => `
+                                        <a href="${link.url}" target="_blank" class="link-preview" title="${link.title}">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            ${link.title.length > 30 ? link.title.substring(0, 30) + '...' : link.title}
+                                        </a>
+                                    `).join('')}
+                                    ${event.links.length > 2 ? `
+                                        <span class="more-links">+${event.links.length - 2} ${currentLanguage === 'kk' ? 'тағы' : currentLanguage === 'ru' ? 'еще' : 'more'}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card-actions">
+                            <button class="btn btn-primary btn-animated participate-event-btn" data-id="${event.id}">
+                                <i class="fas fa-user-plus"></i>
+                                ${t.participate}
+                            </button>
+                            <button class="btn btn-outline btn-animated read-more-btn" data-id="${event.id}" data-type="event">
+                                <i class="fas fa-info-circle"></i>
+                                ${t.readMore}
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function getProfilePage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    
+    const translations = {
+        kk: {
+            title: "Жеке кабинет",
+            roleNotSelected: "Рөл таңдалмаған",
+            selectRole: "Рөлді таңдаңыз",
+            changePassword: "Құпия сөзді өзгерту",
+            currentPassword: "Қазіргі құпия сөз",
+            newPassword: "Жаңа құпия сөз",
+            confirmPassword: "Жаңа құпия сөзді растау",
+            changeButton: "Өзгерту",
+            logout: "Жүйеден шығу",
+            passwordChanged: "Құпия сөз сәтті өзгертілді!",
+            passwordsNotMatch: "Құпия сөздер сәйкес емес!",
+            fillAllFields: "Барлық өрістерді толтырыңыз!",
+            adminPanel: "Админ панелі",
+            adminFeatures: "Сізде барлық функцияларға толық қол жетімділік бар:",
+            teacherPanel: "Мұғалім панелі",
+            teacherFeatures: "Сізге мына функциялар қол жетімді:",
+            studentPanel: "Оқушы панелі",
+            studentFeatures: "Сізге мына функциялар қол жетімді:",
+            yourClass: "Сыныбыңыз"
+        },
+        ru: {
+            title: "Личный кабинет",
+            roleNotSelected: "Роль не выбрана",
+            selectRole: "Выбрать роль",
+            changePassword: "Изменить пароль",
+            currentPassword: "Текущий пароль",
+            newPassword: "Новый пароль",
+            confirmPassword: "Подтвердите новый пароль",
+            changeButton: "Изменить",
+            logout: "Выйти из системы",
+            passwordChanged: "Пароль успешно изменен!",
+            passwordsNotMatch: "Пароли не совпадают!",
+            fillAllFields: "Заполните все поля!",
+            adminPanel: "Админ панель",
+            adminFeatures: "У вас есть полный доступ ко всем функциям:",
+            teacherPanel: "Панель учителя",
+            teacherFeatures: "Вам доступны следующие функции:",
+            studentPanel: "Панель ученика",
+            studentFeatures: "Вам доступны следующие функции:",
+            yourClass: "Ваш класс"
+        },
+        en: {
+            title: "Profile",
+            roleNotSelected: "Role not selected",
+            selectRole: "Select role",
+            changePassword: "Change Password",
+            currentPassword: "Current Password",
+            newPassword: "New Password",
+            confirmPassword: "Confirm New Password",
+            changeButton: "Change",
+            logout: "Log out",
+            passwordChanged: "Password successfully changed!",
+            passwordsNotMatch: "Passwords do not match!",
+            fillAllFields: "Please fill all fields!",
+            adminPanel: "Admin Panel",
+            adminFeatures: "You have full access to all functions:",
+            teacherPanel: "Teacher Panel",
+            teacherFeatures: "You have access to the following functions:",
+            studentPanel: "Student Panel",
+            studentFeatures: "You have access to the following functions:",
+            yourClass: "Your class"
+        }
+    };
+
+    const t = translations[currentLanguage] || translations.kk;
+
+    function getUserSpecificContent() {
+        const user = window.authSystem?.getCurrentUser();
+        
+        if (!user) return '';
+        
+        const roleContents = {
+            'Адмін': `
+                <div class="card role-info-card">
+                    <h3 class="card-title">${t.adminPanel}</h3>
+                    <p>${t.adminFeatures}</p>
+                    <ul class="role-features-list">
+                        <li>${currentLanguage === 'kk' ? 'Жаңалықтарды қосу/жою' : currentLanguage === 'ru' ? 'Добавление/удаление новостей' : 'Add/delete news'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Іс-шараларды қосу/жою' : currentLanguage === 'ru' ? 'Добавление/удаление мероприятий' : 'Add/delete events'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Сілтемелерді қосу' : currentLanguage === 'ru' ? 'Добавление ссылок' : 'Add links'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Барлық ақпаратты көру' : currentLanguage === 'ru' ? 'Просмотр всей информации' : 'View all information'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Жүйені басқару' : currentLanguage === 'ru' ? 'Управление системой' : 'System management'}</li>
+                    </ul>
+                </div>
+            `,
+            'Мұғалім': `
+                <div class="card role-info-card">
+                    <h3 class="card-title">${t.teacherPanel}</h3>
+                    <p>${t.teacherFeatures}</p>
+                    <ul class="role-features-list">
+                        <li>${currentLanguage === 'kk' ? 'Жаңалықтарды көру' : currentLanguage === 'ru' ? 'Просмотр новостей' : 'View news'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Іс-шараларды көру' : currentLanguage === 'ru' ? 'Просмотр мероприятий' : 'View events'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Сілтемелерге қол жеткізу' : currentLanguage === 'ru' ? 'Доступ к ссылкам' : 'Access to links'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Оқушылар тізімін көру' : currentLanguage === 'ru' ? 'Просмотр списка учеников' : 'View student list'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Жеке кабинет' : currentLanguage === 'ru' ? 'Личный кабинет' : 'Personal account'}</li>
+                    </ul>
+                </div>
+            `,
+            'Оқушы': `
+                <div class="card role-info-card">
+                    <h3 class="card-title">${t.studentPanel}</h3>
+                    <p>${t.studentFeatures}</p>
+                    <ul class="role-features-list">
+                        <li>${currentLanguage === 'kk' ? 'Жаңалықтарды көру' : currentLanguage === 'ru' ? 'Просмотр новостей' : 'View news'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Іс-шараларға қатысу' : currentLanguage === 'ru' ? 'Участие в мероприятиях' : 'Participate in events'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Сілтемелерге қол жеткізу' : currentLanguage === 'ru' ? 'Доступ к ссылкам' : 'Access to links'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Мұғалімдермен байланысу' : currentLanguage === 'ru' ? 'Связь с учителями' : 'Contact teachers'}</li>
+                        <li>${currentLanguage === 'kk' ? 'Жеке кабинет' : currentLanguage === 'ru' ? 'Личный кабинет' : 'Personal account'}</li>
+                    </ul>
+                    ${user.class ? `<p class="class-info"><strong>${t.yourClass}:</strong> ${user.class}</p>` : ''}
+                </div>
+            `
+        };
+        
+        return roleContents[user.role] || '';
+    }
+
+    return `
+        <div class="page">
+            <h1 class="page-title">${t.title}</h1>
+            
+            ${getUserSpecificContent()}
+
+            <div class="card profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-large">
+                        ${getInitials(currentUser?.fullName || 'U')}
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-name">${currentUser?.fullName || 'User'}</h2>
+                    <div class="profile-role">
+                        <span class="role-badge ${currentUser?.role ? 'role-selected' : 'role-not-selected'}">
+                            ${currentUser?.role || t.roleNotSelected}
+                        </span>
+                    </div>
+                    ${!currentUser?.role ? `
+                        <button class="btn btn-primary btn-sm select-role-btn">
+                            <i class="fas fa-check"></i>
+                            ${t.selectRole}
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="section-title">${t.changePassword}</h3>
+                <div class="password-form">
+                    <div class="form-group">
+                        <label>${t.currentPassword}</label>
+                        <input type="password" id="currentPassword" class="form-input" placeholder="${t.currentPassword}">
+                    </div>
+                    <div class="form-group">
+                        <label>${t.newPassword}</label>
+                        <input type="password" id="newPassword" class="form-input" placeholder="${t.newPassword}">
+                    </div>
+                    <div class="form-group">
+                        <label>${t.confirmPassword}</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="${t.confirmPassword}">
+                    </div>
+                    <button class="btn btn-primary btn-animated" id="changePasswordBtn">
+                        <i class="fas fa-key"></i>
+                        <span class="btn-text">${t.changeButton}</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="logout-section">
+                    <button class="btn btn-danger btn-full" id="logoutBtnProfile">
+                        <i class="fas fa-sign-out-alt"></i>
+                        ${t.logout}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
 // Event handlers
 function deleteNews(id) {
@@ -1196,11 +1986,476 @@ function initializePage(pageId) {
             break;
     }
     
-    console.log(`🔧 Initialized page: ${pageId}`);
+    console.log(`Initialized page: ${pageId}`);
 }
 
-// Остальные функции initializeNewsPage(), initializeTeachersPage(), initializeEventsPage(), initializeProfilePage()
-// остаются такими же как в предыдущем коде, но с адаптацией для мобильных устройств
+function initializeNewsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Адмін';
+    
+    const newsDateInput = document.getElementById('newsDate');
+    if (newsDateInput) {
+        window.newsCalendar = new Calendar('newsDate');
+    }
+    
+    if (isAdmin) {
+        const showNewsFormBtn = document.getElementById('showNewsFormBtn');
+        const newsFormPanel = document.getElementById('newsFormPanel');
+        const cancelNewsBtn = document.getElementById('cancelNewsBtn');
+        
+        if (showNewsFormBtn && newsFormPanel) {
+            showNewsFormBtn.addEventListener('click', function() {
+                newsFormPanel.style.display = newsFormPanel.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+        
+        if (cancelNewsBtn && newsFormPanel) {
+            cancelNewsBtn.addEventListener('click', function() {
+                newsFormPanel.style.display = 'none';
+            });
+        }
+        
+        const addNewsLinkBtn = document.getElementById('addNewsLinkBtn');
+        if (addNewsLinkBtn) {
+            addNewsLinkBtn.addEventListener('click', function() {
+                const linkField = createLinkField();
+                document.getElementById('newsLinksContainer').appendChild(linkField);
+            });
+        }
+        
+        const addNewsBtn = document.getElementById('addNewsBtn');
+        const newsImageInput = document.getElementById('newsImageInput');
+        const newsImagePreview = document.getElementById('newsImagePreview');
+        const newsBannerInput = document.getElementById('newsBannerInput');
+        const newsBannerPreview = document.getElementById('newsBannerPreview');
+        
+        if (addNewsBtn) {
+            addNewsBtn.addEventListener('click', async function() {
+                const title = document.getElementById('newsTitle').value.trim();
+                const content = document.getElementById('newsContent').value.trim();
+                const date = document.getElementById('newsDate').value.trim();
+                const imageFile = newsImageInput.files[0];
+                const bannerFile = newsBannerInput.files[0];
+                
+                const links = getLinksFromForm('newsLinksContainer');
+                
+                const t = currentLanguage === 'kk' ? {
+                    allFields: "Барлық өрістерді толтырыңыз!",
+                    added: "Жаңалық сәтті қосылды!"
+                } : currentLanguage === 'ru' ? {
+                    allFields: "Заполните все поля!",
+                    added: "Новость успешно добавлена!"
+                } : {
+                    allFields: "Please fill all fields!",
+                    added: "News successfully added!"
+                };
+                
+                if (!title || !content || !date) {
+                    showNotification(t.allFields, 'error');
+                    return;
+                }
+                
+                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateRegex.test(date)) {
+                    showNotification(currentLanguage === 'kk' ? 'Күн форматы қате! (YYYY-MM-DD)' : currentLanguage === 'ru' ? 'Неверный формат даты! (YYYY-MM-DD)' : 'Invalid date format! (YYYY-MM-DD)', 'error');
+                    return;
+                }
+                
+                this.classList.add('loading');
+                
+                const newNews = {
+                    id: Date.now(),
+                    title: { kk: title, ru: title, en: title },
+                    content: { kk: content, ru: content, en: content },
+                    date: date,
+                    formattedDate: {
+                        kk: formatDateForDisplay(date),
+                        ru: formatDateForDisplay(date),
+                        en: formatDateForDisplay(date)
+                    },
+                    banner: null,
+                    image: null,
+                    links: links
+                };
+                
+                try {
+                    if (imageFile) {
+                        newNews.image = await readFileAsDataURL(imageFile);
+                    }
+                    
+                    if (bannerFile) {
+                        newNews.banner = await readFileAsDataURL(bannerFile);
+                    }
+                    
+                    newsData.unshift(newNews);
+                    localStorage.setItem('newsData', JSON.stringify(newsData));
+                    
+                    document.getElementById('newsTitle').value = '';
+                    document.getElementById('newsContent').value = '';
+                    document.getElementById('newsDate').value = '';
+                    newsImageInput.value = '';
+                    newsBannerInput.value = '';
+                    newsImagePreview.style.display = 'none';
+                    newsImagePreview.src = '';
+                    newsBannerPreview.style.display = 'none';
+                    newsBannerPreview.src = '';
+                    document.getElementById('newsLinksContainer').innerHTML = '';
+                    newsFormPanel.style.display = 'none';
+                    
+                    loadPage('news');
+                    showNotification(t.added);
+                    
+                } catch (error) {
+                    showNotification('Суретті жүктеу кезінде қате пайда болды!', 'error');
+                } finally {
+                    this.classList.remove('loading');
+                }
+            });
+        }
+        
+        if (newsImageInput && newsImagePreview) {
+            newsImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        newsImagePreview.src = e.target.result;
+                        newsImagePreview.style.display = 'block';
+                        newsImagePreview.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        if (newsBannerInput && newsBannerPreview) {
+            newsBannerInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        newsBannerPreview.src = e.target.result;
+                        newsBannerPreview.style.display = 'block';
+                        newsBannerPreview.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+    
+    document.querySelectorAll('.read-more-btn[data-type="news"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const newsId = parseInt(this.getAttribute('data-id'));
+            readMoreNews(newsId);
+        });
+    });
+    
+    document.querySelectorAll('.delete-btn[data-type="news"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const newsId = parseInt(this.getAttribute('data-id'));
+            deleteNews(newsId);
+        });
+    });
+}
+
+function initializeTeachersPage() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const teacherCards = document.querySelectorAll('.teacher-card');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const subject = this.getAttribute('data-subject');
+            
+            teacherCards.forEach(card => {
+                if (subject === 'all' || card.getAttribute('data-subject') === subject) {
+                    card.style.display = 'block';
+                    setTimeout(() => card.style.opacity = '1', 50);
+                } else {
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.display = 'none', 300);
+                }
+            });
+        });
+    });
+    
+    document.querySelectorAll('.contact-teacher-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const teacherName = this.getAttribute('data-teacher');
+            contactTeacher(teacherName);
+        });
+    });
+}
+
+function initializeEventsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Адмін';
+    
+    const eventDateInput = document.getElementById('eventDate');
+    if (eventDateInput) {
+        window.eventCalendar = new Calendar('eventDate');
+    }
+    
+    if (isAdmin) {
+        const showEventFormBtn = document.getElementById('showEventFormBtn');
+        const eventFormPanel = document.getElementById('eventFormPanel');
+        const cancelEventBtn = document.getElementById('cancelEventBtn');
+        
+        if (showEventFormBtn && eventFormPanel) {
+            showEventFormBtn.addEventListener('click', function() {
+                eventFormPanel.style.display = eventFormPanel.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+        
+        if (cancelEventBtn && eventFormPanel) {
+            cancelEventBtn.addEventListener('click', function() {
+                eventFormPanel.style.display = 'none';
+            });
+        }
+        
+        const addEventLinkBtn = document.getElementById('addEventLinkBtn');
+        if (addEventLinkBtn) {
+            addEventLinkBtn.addEventListener('click', function() {
+                const linkField = createLinkField();
+                document.getElementById('eventLinksContainer').appendChild(linkField);
+            });
+        }
+        
+        const addEventBtn = document.getElementById('addEventBtn');
+        const eventImageInput = document.getElementById('eventImageInput');
+        const eventImagePreview = document.getElementById('eventImagePreview');
+        const eventBannerInput = document.getElementById('eventBannerInput');
+        const eventBannerPreview = document.getElementById('eventBannerPreview');
+        
+        if (addEventBtn) {
+            addEventBtn.addEventListener('click', async function() {
+                const title = document.getElementById('eventTitle').value.trim();
+                const description = document.getElementById('eventDescription').value.trim();
+                const date = document.getElementById('eventDate').value.trim();
+                const imageFile = eventImageInput.files[0];
+                const bannerFile = eventBannerInput.files[0];
+                
+                const links = getLinksFromForm('eventLinksContainer');
+                
+                const t = currentLanguage === 'kk' ? {
+                    allFields: "Барлық өрістерді толтырыңыз!",
+                    added: "Іс-шара сәтті қосылды!"
+                } : currentLanguage === 'ru' ? {
+                    allFields: "Заполните все поля!",
+                    added: "Мероприятие успешно добавлено!"
+                } : {
+                    allFields: "Please fill all fields!",
+                    added: "Event successfully added!"
+                };
+                
+                if (!title || !description || !date) {
+                    showNotification(t.allFields, 'error');
+                    return;
+                }
+                
+                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateRegex.test(date)) {
+                    showNotification(currentLanguage === 'kk' ? 'Күн форматы қате! (YYYY-MM-DD)' : currentLanguage === 'ru' ? 'Неверный формат даты! (YYYY-MM-DD)' : 'Invalid date format! (YYYY-MM-DD)', 'error');
+                    return;
+                }
+                
+                this.classList.add('loading');
+                
+                const newEvent = {
+                    id: Date.now(),
+                    title: { kk: title, ru: title, en: title },
+                    description: { kk: description, ru: description, en: description },
+                    date: date,
+                    formattedDate: {
+                        kk: formatDateForDisplay(date),
+                        ru: formatDateForDisplay(date),
+                        en: formatDateForDisplay(date)
+                    },
+                    banner: null,
+                    image: null,
+                    links: links
+                };
+                
+                try {
+                    if (imageFile) {
+                        newEvent.image = await readFileAsDataURL(imageFile);
+                    }
+                    
+                    if (bannerFile) {
+                        newEvent.banner = await readFileAsDataURL(bannerFile);
+                    }
+                    
+                    eventsData.unshift(newEvent);
+                    localStorage.setItem('eventsData', JSON.stringify(eventsData));
+                    
+                    document.getElementById('eventTitle').value = '';
+                    document.getElementById('eventDescription').value = '';
+                    document.getElementById('eventDate').value = '';
+                    eventImageInput.value = '';
+                    eventBannerInput.value = '';
+                    eventImagePreview.style.display = 'none';
+                    eventImagePreview.src = '';
+                    eventBannerPreview.style.display = 'none';
+                    eventBannerPreview.src = '';
+                    document.getElementById('eventLinksContainer').innerHTML = '';
+                    eventFormPanel.style.display = 'none';
+                    
+                    loadPage('events');
+                    showNotification(t.added);
+                    
+                } catch (error) {
+                    showNotification('Суретті жүктеу кезінде қате пайда болды!', 'error');
+                } finally {
+                    this.classList.remove('loading');
+                }
+            });
+        }
+        
+        if (eventImageInput && eventImagePreview) {
+            eventImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        eventImagePreview.src = e.target.result;
+                        eventImagePreview.style.display = 'block';
+                        eventImagePreview.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        if (eventBannerInput && eventBannerPreview) {
+            eventBannerInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        eventBannerPreview.src = e.target.result;
+                        eventBannerPreview.style.display = 'block';
+                        eventBannerPreview.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+    
+    document.querySelectorAll('.participate-event-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const eventId = parseInt(this.getAttribute('data-id'));
+            participateInEvent(eventId);
+        });
+    });
+    
+    document.querySelectorAll('.read-more-btn[data-type="event"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const eventId = parseInt(this.getAttribute('data-id'));
+            showDetailModal('event', eventId);
+        });
+    });
+    
+    document.querySelectorAll('.delete-btn[data-type="event"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const eventId = parseInt(this.getAttribute('data-id'));
+            deleteEvent(eventId);
+        });
+    });
+}
+
+function initializeProfilePage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    
+    const selectRoleBtn = document.querySelector('.select-role-btn');
+    if (selectRoleBtn) {
+        selectRoleBtn.addEventListener('click', function() {
+            const roles = ['Адмін', 'Мұғалім', 'Оқушы'];
+            const currentRole = currentUser?.role;
+            const currentIndex = roles.indexOf(currentRole);
+            const nextRole = roles[(currentIndex + 1) % roles.length];
+            
+            if (window.authSystem && currentUser) {
+                currentUser.role = nextRole;
+                window.authSystem.currentUser = currentUser;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                loadPage('profile');
+                
+                const t = currentLanguage === 'kk' ? 
+                    `Рөл "${nextRole}" таңдалды` :
+                    currentLanguage === 'ru' ? 
+                    `Роль "${nextRole}" выбрана` :
+                    `Role "${nextRole}" selected`;
+                
+                showNotification(t, 'success');
+            }
+        });
+    }
+
+    const logoutBtnProfile = document.getElementById('logoutBtnProfile');
+    if (logoutBtnProfile) {
+        logoutBtnProfile.addEventListener('click', function() {
+            const confirmMessages = {
+                kk: 'Шынымен жүйеден шыққыңыз келе ме?',
+                ru: 'Вы действительно хотите выйти из системы?',
+                en: 'Are you sure you want to log out?'
+            };
+            
+            if (confirm(confirmMessages[currentLanguage] || confirmMessages['kk'])) {
+                window.authSystem.logout();
+            }
+        });
+    }
+
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const t = currentLanguage === 'kk' ? {
+                allFields: "Барлық өрістерді толтырыңыз!",
+                notMatch: "Жаңа құпия сөздер сәйкес емес!",
+                changed: "Құпия сөз сәтті өзгертілді!"
+            } : currentLanguage === 'ru' ? {
+                allFields: "Заполните все поля!",
+                notMatch: "Новые пароли не совпадают!",
+                changed: "Пароль успешно изменен!"
+            } : {
+                allFields: "Please fill all fields!",
+                notMatch: "New passwords do not match!",
+                changed: "Password successfully changed!"
+            };
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showNotification(t.allFields, 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification(t.notMatch, 'error');
+                return;
+            }
+            
+            this.classList.add('loading');
+            
+            setTimeout(() => {
+                showNotification(t.changed);
+                
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                this.classList.remove('loading');
+            }, 1500);
+        });
+    }
+}
 
 // Make functions globally available
 window.deleteNews = deleteNews;
@@ -1215,7 +2470,7 @@ window.formatDateForDisplay = formatDateForDisplay;
 window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
-console.log('🎉 Application initialized successfully!');
+console.log('Application initialized successfully!');
 
 // Добавляем стили для модального окна и ссылок
 const modalStyles = document.createElement('style');
@@ -1407,7 +2662,6 @@ modalStyles.textContent = `
         min-width: 120px;
     }
 
-    /* Стили для превью ссылок в карточках */
     .links-preview {
         display: flex;
         flex-direction: column;
@@ -1470,3 +2724,4 @@ modalStyles.textContent = `
     }
 `;
 document.head.appendChild(modalStyles);
+

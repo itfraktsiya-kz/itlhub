@@ -2715,3 +2715,98 @@ button,
 .notification {
     z-index: 1000;
 }
+/* Fix for sidebar toggle button visibility */
+.sidebar-toggle {
+    z-index: 101;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.sidebar-toggle:hover {
+    background: var(--primary-light);
+    transform: scale(1.1);
+}
+
+/* Ensure the button is always visible */
+.sidebar-header .sidebar-toggle {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Fix for collapsed sidebar */
+.sidebar.collapsed .sidebar-toggle {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Mobile header fixes */
+.mobile-header {
+    z-index: 90;
+}
+
+.mobile-menu-toggle {
+    z-index: 91;
+    display: flex !important;
+    visibility: visible !important;
+}
+
+/* Ensure proper stacking context */
+.sidebar {
+    z-index: 100;
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Fix for sidebar animations */
+.sidebar.animating {
+    z-index: 100;
+}
+
+/* Specific fix for the toggle button in different states */
+#sidebarToggle {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    transform: none !important;
+}
+
+/* Remove any hiding styles that might be affecting the button */
+.sidebar-toggle[style*="display: none"],
+.sidebar-toggle[style*="visibility: hidden"],
+.sidebar-toggle[style*="opacity: 0"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Additional mobile fixes */
+@media (max-width: 1024px) {
+    .sidebar-toggle {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Force show the toggle button */
+#sidebarToggle {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+}

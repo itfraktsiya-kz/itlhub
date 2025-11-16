@@ -181,7 +181,7 @@ const studentsData = [
         name: "Ержигит Мансур",
         class: "10А",
         achievement: {
-            kk: "Республикалық IT олимпиадасының жеңімпазы",
+            kk: "Республикалық IT олимпиадысының жеңімпазы",
             ru: "Победитель Республиканской IT олимпиады",
             en: "Winner of Republican IT Olympiad"
         },
@@ -198,7 +198,7 @@ const studentsData = [
         name: "Айгерім Оразбай",
         class: "11Б",
         achievement: {
-            kk: "Қалалық математика олимпиадасының жеңімпазы",
+            kk: "Қалалық математика олимпиадысының жеңімпазы",
             ru: "Победитель городской математической олимпиады",
             en: "Winner of City Mathematics Olympiad"
         },
@@ -626,16 +626,36 @@ function setupMobileMenu() {
     const themeToggleMobile = document.getElementById('themeToggleMobile');
     const userBtnMobile = document.getElementById('userBtnMobile');
 
+    console.log('Setting up mobile menu...');
+    console.log('Mobile toggle:', mobileMenuToggle);
+    console.log('Mobile overlay:', mobileMenuOverlay);
+    console.log('Sidebar:', sidebar);
+
     // Улучшенная обработка мобильного меню
     const toggleMobileMenu = (e) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
+        console.log('Mobile menu toggle clicked');
         if (sidebar && mobileMenuOverlay) {
+            const isActive = sidebar.classList.contains('active');
+            console.log('Current state:', isActive);
+            
             sidebar.classList.toggle('active');
             mobileMenuOverlay.classList.toggle('active');
-            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+            document.body.style.overflow = !isActive ? 'hidden' : '';
+            
+            // Добавляем анимацию для плавного открытия/закрытия
+            if (!isActive) {
+                sidebar.style.transform = 'translateX(0)';
+            } else {
+                setTimeout(() => {
+                    sidebar.style.transform = 'translateX(-100%)';
+                }, 300);
+            }
+            
+            console.log('New state:', sidebar.classList.contains('active'));
         }
     };
 
@@ -643,27 +663,43 @@ function setupMobileMenu() {
         if (e) {
             e.preventDefault();
         }
+        console.log('Closing mobile menu');
         if (sidebar && mobileMenuOverlay) {
             sidebar.classList.remove('active');
             mobileMenuOverlay.classList.remove('active');
             document.body.style.overflow = '';
+            
+            // Анимация закрытия
+            setTimeout(() => {
+                sidebar.style.transform = 'translateX(-100%)';
+            }, 300);
         }
     };
 
-    if (mobileMenuToggle && sidebar) {
+    // Add event listeners to mobile menu toggle
+    if (mobileMenuToggle) {
         mobileMenuToggle.addEventListener('click', toggleMobileMenu);
         mobileMenuToggle.addEventListener('touchstart', toggleMobileMenu);
+        console.log('Mobile menu toggle event listeners added');
+    } else {
+        console.error('Mobile menu toggle button not found!');
     }
 
+    // Add event listeners to mobile menu overlay
     if (mobileMenuOverlay) {
         mobileMenuOverlay.addEventListener('click', closeMobileMenu);
         mobileMenuOverlay.addEventListener('touchstart', closeMobileMenu);
+        console.log('Mobile menu overlay event listeners added');
+    } else {
+        console.error('Mobile menu overlay not found!');
     }
 
+    // Обработчики для мобильных кнопок темы и профиля
     if (themeToggleMobile) {
         const toggleThemeHandler = (e) => {
             if (e) e.preventDefault();
             toggleTheme();
+            closeMobileMenu();
         };
         
         themeToggleMobile.addEventListener('click', toggleThemeHandler);
@@ -685,6 +721,7 @@ function setupMobileMenu() {
     const closeMenuOnItemClick = (e) => {
         if (window.innerWidth <= 1024) {
             if (e.target.closest('.menu-item') && sidebar && sidebar.classList.contains('active')) {
+                console.log('Closing menu on item click');
                 closeMobileMenu();
             }
         }
@@ -692,6 +729,40 @@ function setupMobileMenu() {
 
     document.addEventListener('click', closeMenuOnItemClick);
     document.addEventListener('touchstart', closeMenuOnItemClick);
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Закрытие меню при изменении ориентации устройства
+    window.addEventListener('orientationchange', () => {
+        if (sidebar && sidebar.classList.contains('active')) {
+            setTimeout(closeMobileMenu, 300);
+        }
+    });
+
+    // Адаптация к изменению размера окна
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024 && sidebar && sidebar.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Предотвращение скролла body при открытом меню
+    const preventBodyScroll = (e) => {
+        if (sidebar && sidebar.classList.contains('active')) {
+            e.preventDefault();
+        }
+    };
+
+    // Добавляем обработчики для предотвращения скролла
+    document.addEventListener('touchmove', preventBodyScroll, { passive: false });
+    document.addEventListener('wheel', preventBodyScroll, { passive: false });
+
+    console.log('Mobile menu setup complete');
 }
 
 function setupSidebar() {

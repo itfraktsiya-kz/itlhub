@@ -1,4 +1,4 @@
- // Authentication System
+// Authentication System
 class AuthSystem {
     constructor() {
         this.currentUser = null;
@@ -46,6 +46,93 @@ class AuthSystem {
                 }
             });
         }
+
+        // Password visibility toggle
+        this.setupPasswordVisibility();
+    }
+
+    setupPasswordVisibility() {
+        // For login form
+        const loginPasswordGroup = document.querySelector('.auth-form:first-of-type .input-group:nth-child(2)');
+        if (loginPasswordGroup) {
+            this.addPasswordToggle(loginPasswordGroup, 'passwordInput');
+        }
+
+        // For registration form
+        const regPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(2)');
+        const regConfirmPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(3)');
+        
+        if (regPasswordGroup) {
+            this.addPasswordToggle(regPasswordGroup, 'regPassword');
+        }
+        if (regConfirmPasswordGroup) {
+            this.addPasswordToggle(regConfirmPasswordGroup, 'regConfirmPassword');
+        }
+    }
+
+    addPasswordToggle(inputGroup, inputId) {
+        const passwordInput = document.getElementById(inputId);
+        if (!passwordInput) return;
+
+        // Create toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'password-toggle';
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        toggleBtn.setAttribute('aria-label', 'Show password');
+        
+        // Add styles
+        toggleBtn.style.background = 'none';
+        toggleBtn.style.border = 'none';
+        toggleBtn.style.position = 'absolute';
+        toggleBtn.style.right = '10px';
+        toggleBtn.style.top = '50%';
+        toggleBtn.style.transform = 'translateY(-50%)';
+        toggleBtn.style.cursor = 'pointer';
+        toggleBtn.style.color = 'var(--text-tertiary)';
+        toggleBtn.style.padding = '5px';
+        toggleBtn.style.borderRadius = '4px';
+        toggleBtn.style.transition = 'color 0.2s ease';
+
+        // Add hover effect
+        toggleBtn.addEventListener('mouseenter', () => {
+            toggleBtn.style.color = 'var(--primary)';
+            toggleBtn.style.background = 'var(--bg-tertiary)';
+        });
+
+        toggleBtn.addEventListener('mouseleave', () => {
+            if (!toggleBtn.classList.contains('active')) {
+                toggleBtn.style.color = 'var(--text-tertiary)';
+                toggleBtn.style.background = 'none';
+            }
+        });
+
+        // Toggle password visibility
+        toggleBtn.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            
+            // Update icon
+            const icon = toggleBtn.querySelector('i');
+            if (isPassword) {
+                icon.className = 'fas fa-eye-slash';
+                toggleBtn.classList.add('active');
+                toggleBtn.style.color = 'var(--primary)';
+                toggleBtn.style.background = 'var(--primary-light)';
+            } else {
+                icon.className = 'fas fa-eye';
+                toggleBtn.classList.remove('active');
+                toggleBtn.style.color = 'var(--text-tertiary)';
+                toggleBtn.style.background = 'none';
+            }
+        });
+
+        // Add to input group
+        inputGroup.style.position = 'relative';
+        inputGroup.appendChild(toggleBtn);
+
+        // Adjust input padding to make space for the toggle button
+        passwordInput.style.paddingRight = '40px';
     }
 
     checkAuthState() {
@@ -157,21 +244,21 @@ class AuthSystem {
                 login: 'mansur_erzhigit_7',
                 password: 'mans27',
                 fullName: 'Ержігіт Мансур',
-                role: 'admin',
+                role: 'Адмін',
                 class: ''
             },
             {
                 login: 'alzhanova_aybibi_3',
                 password: 'aybibi06',
                 fullName: 'Альжанова Айбиби',
-                role: 'admin',
+                role: 'Адмін',
                 class: ''
             },
             {
                 login: 'bulat_abilmansur_8',
                 password: 'abil21',
                 fullName: 'Булат Әбілмансур',
-                role: 'admin',
+                role: 'Адмін',
                 class: ''
             },
             {

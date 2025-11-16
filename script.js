@@ -213,29 +213,71 @@ const studentsData = [
     }
 ];
 
-// Calendar functionality
+// Calendar functionality - УПРОЩЕННАЯ ВЕРСИЯ ДЛЯ МОБИЛЬНЫХ
 class Calendar {
     constructor(inputId) {
         this.inputId = inputId;
         this.selectedDate = null;
         this.currentMonth = new Date().getMonth();
         this.currentYear = new Date().getFullYear();
-        this.isMobile = window.innerWidth <= 480;
+        this.isMobile = window.innerWidth <= 768;
         this.init();
     }
 
     init() {
-        this.createCalendar();
-        this.attachEventListeners();
-        
-        // Добавляем класс mobile для мобильных устройств
-        const input = document.getElementById(this.inputId);
-        if (input && this.isMobile) {
-            input.classList.add('mobile');
+        if (this.isMobile) {
+            this.createMobileInput();
+        } else {
+            this.createDesktopCalendar();
         }
+        this.attachEventListeners();
     }
 
-    createCalendar() {
+    createMobileInput() {
+        const input = document.getElementById(this.inputId);
+        if (!input) return;
+
+        // Скрываем оригинальное поле и создаем мобильную версию
+        input.style.display = 'none';
+        
+        const mobileContainer = document.createElement('div');
+        mobileContainer.className = 'mobile-date-container';
+        
+        const today = new Date();
+        const currentDay = today.getDate();
+        const currentMonth = today.getMonth() + 1;
+        const currentYear = today.getFullYear();
+
+        mobileContainer.innerHTML = `
+            <div class="mobile-date-inputs">
+                <div class="date-input-group">
+                    <label>${currentLanguage === 'kk' ? 'Күн' : currentLanguage === 'ru' ? 'День' : 'Day'}</label>
+                    <input type="number" class="mobile-date-input" id="mobileDay_${this.inputId}" 
+                           min="1" max="31" value="${currentDay}" placeholder="01">
+                </div>
+                <div class="date-separator">/</div>
+                <div class="date-input-group">
+                    <label>${currentLanguage === 'kk' ? 'Ай' : currentLanguage === 'ru' ? 'Месяц' : 'Month'}</label>
+                    <input type="number" class="mobile-date-input" id="mobileMonth_${this.inputId}" 
+                           min="1" max="12" value="${currentMonth}" placeholder="01">
+                </div>
+                <div class="date-separator">/</div>
+                <div class="date-input-group">
+                    <label>${currentLanguage === 'kk' ? 'Жыл' : currentLanguage === 'ru' ? 'Год' : 'Year'}</label>
+                    <input type="number" class="mobile-date-input" id="mobileYear_${this.inputId}" 
+                           min="2020" max="2030" value="${currentYear}" placeholder="2024">
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm mobile-date-today" id="mobileToday_${this.inputId}">
+                ${currentLanguage === 'kk' ? 'Бүгін' : currentLanguage === 'ru' ? 'Сегодня' : 'Today'}
+            </button>
+        `;
+
+        input.parentNode.appendChild(mobileContainer);
+        this.mobileContainer = mobileContainer;
+    }
+
+    createDesktopCalendar() {
         const input = document.getElementById(this.inputId);
         if (!input) return;
 
@@ -244,22 +286,12 @@ class Calendar {
         
         const calendarDropdown = document.createElement('div');
         calendarDropdown.className = 'calendar-dropdown';
-        calendarDropdown.innerHTML = this.getCalendarHTML();
+        calendarDropdown.innerHTML = this.getDesktopCalendarHTML();
         
         calendarContainer.appendChild(calendarDropdown);
         input.parentNode.appendChild(calendarContainer);
         
         this.calendarDropdown = calendarDropdown;
-    }
-
-    getCalendarHTML() {
-        // Для мобильных устройств показываем числовой ввод
-        if (this.isMobile) {
-            return this.getMobileDateInputHTML();
-        }
-
-        // Для десктопов - обычный календарь
-        return this.getDesktopCalendarHTML();
     }
 
     getDesktopCalendarHTML() {
@@ -301,7 +333,7 @@ class Calendar {
         }
 
         for (let i = 0; i < startingDay; i++) {
-            calendarHTML += `<button class="calendar-day other-month" type="button">${new Date(this.currentYear, this.currentMonth, -i).getDate()}</button>`;
+            calendarHTML += `<div class="calendar-day other-month">${new Date(this.currentYear, this.currentMonth, -i).getDate()}</div>`;
         }
 
         const today = new Date();
@@ -314,22 +346,22 @@ class Calendar {
             if (isToday) dayClass += ' today';
             if (isSelected) dayClass += ' selected';
             
-            calendarHTML += `<button class="${dayClass}" data-day="${day}" type="button">${day}</button>`;
+            calendarHTML += `<div class="${dayClass}" data-day="${day}">${day}</div>`;
         }
 
         const totalCells = 42;
         const remainingCells = totalCells - (startingDay + daysInMonth);
         for (let i = 1; i <= remainingCells; i++) {
-            calendarHTML += `<button class="calendar-day other-month" type="button">${i}</button>`;
+            calendarHTML += `<div class="calendar-day other-month">${i}</div>`;
         }
 
         calendarHTML += `
             </div>
             <div class="calendar-actions">
-                <button class="btn btn-outline btn-sm" id="calendarToday" type="button">
+                <button class="btn btn-outline btn-sm" id="calendarToday">
                     ${currentLanguage === 'kk' ? 'Бүгін' : currentLanguage === 'ru' ? 'Сегодня' : 'Today'}
                 </button>
-                <button class="btn btn-primary btn-sm" id="calendarSelect" type="button">
+                <button class="btn btn-primary btn-sm" id="calendarSelect">
                     ${currentLanguage === 'kk' ? 'Таңдау' : currentLanguage === 'ru' ? 'Выбрать' : 'Select'}
                 </button>
             </div>
@@ -338,122 +370,81 @@ class Calendar {
         return calendarHTML;
     }
 
-    getMobileDateInputHTML() {
-        const today = new Date();
-        const currentDay = today.getDate();
-        const currentMonth = today.getMonth() + 1;
-        const currentYear = today.getFullYear();
-
-        const monthNames = {
-            kk: ['Қаңтар', 'Ақпан', 'Наурыз', 'Сәуір', 'Мамыр', 'Маусым', 'Шілде', 'Тамыз', 'Қыркүйек', 'Қазан', 'Қараша', 'Желтоқсан'],
-            ru: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-        };
-
-        const t = monthNames[currentLanguage] || monthNames.kk;
-
-        return `
-            <div class="mobile-date-input">
-                <div class="date-input-group">
-                    <label class="date-input-label">${currentLanguage === 'kk' ? 'Күн' : currentLanguage === 'ru' ? 'День' : 'Day'}</label>
-                    <input type="number" class="date-number-input" id="mobileDayInput" 
-                           min="1" max="31" value="${this.selectedDate ? this.selectedDate.getDate() : currentDay}" 
-                           placeholder="DD">
-                </div>
-                
-                <div class="date-input-group">
-                    <label class="date-input-label">${currentLanguage === 'kk' ? 'Ай' : currentLanguage === 'ru' ? 'Месяц' : 'Month'}</label>
-                    <select class="date-number-input" id="mobileMonthInput">
-                        ${Array.from({length: 12}, (_, i) => `
-                            <option value="${i + 1}" ${(this.selectedDate ? this.selectedDate.getMonth() + 1 : currentMonth) === i + 1 ? 'selected' : ''}>
-                                ${t[i]}
-                            </option>
-                        `).join('')}
-                    </select>
-                </div>
-                
-                <div class="date-input-group">
-                    <label class="date-input-label">${currentLanguage === 'kk' ? 'Жыл' : currentLanguage === 'ru' ? 'Год' : 'Year'}</label>
-                    <input type="number" class="date-number-input" id="mobileYearInput" 
-                           min="2020" max="2030" value="${this.selectedDate ? this.selectedDate.getFullYear() : currentYear}" 
-                           placeholder="YYYY">
-                </div>
-                
-                <div class="calendar-actions">
-                    <button class="btn btn-outline btn-sm" id="mobileDateToday" type="button">
-                        ${currentLanguage === 'kk' ? 'Бүгін' : currentLanguage === 'ru' ? 'Сегодня' : 'Today'}
-                    </button>
-                    <button class="btn btn-primary btn-sm" id="mobileDateSelect" type="button">
-                        ${currentLanguage === 'kk' ? 'Таңдау' : currentLanguage === 'ru' ? 'Выбрать' : 'Select'}
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
     attachEventListeners() {
-        const input = document.getElementById(this.inputId);
-        if (!input) return;
-        
-        const toggleCalendarHandler = (e) => {
-            e.stopPropagation();
-            this.toggleCalendar();
-        };
-
-        input.addEventListener('click', toggleCalendarHandler);
-        input.addEventListener('touchstart', toggleCalendarHandler);
-
-        const hideCalendarHandler = (e) => {
-            if (!e.target.closest('.calendar-container')) {
-                this.hideCalendar();
-            }
-        };
-
-        document.addEventListener('click', hideCalendarHandler);
-        document.addEventListener('touchstart', hideCalendarHandler);
-
-        document.addEventListener('languageChanged', () => {
-            this.updateCalendar();
-        });
-
-        // Обработчик изменения размера окна для переключения между режимами
-        window.addEventListener('resize', () => {
-            const wasMobile = this.isMobile;
-            this.isMobile = window.innerWidth <= 480;
-            
-            if (wasMobile !== this.isMobile) {
-                this.updateCalendar();
-            }
-        });
-    }
-
-    toggleCalendar() {
-        if (this.calendarDropdown) {
-            this.calendarDropdown.classList.toggle('show');
-            if (this.calendarDropdown.classList.contains('show')) {
-                this.updateCalendar();
-            }
-        }
-    }
-
-    hideCalendar() {
-        if (this.calendarDropdown) {
-            this.calendarDropdown.classList.remove('show');
-        }
-    }
-
-    updateCalendar() {
-        if (this.calendarDropdown) {
-            this.calendarDropdown.innerHTML = this.getCalendarHTML();
-            this.attachCalendarEvents();
-        }
-    }
-
-    attachCalendarEvents() {
         if (this.isMobile) {
             this.attachMobileEvents();
         } else {
             this.attachDesktopEvents();
+        }
+    }
+
+    attachMobileEvents() {
+        const dayInput = document.getElementById(`mobileDay_${this.inputId}`);
+        const monthInput = document.getElementById(`mobileMonth_${this.inputId}`);
+        const yearInput = document.getElementById(`mobileYear_${this.inputId}`);
+        const todayBtn = document.getElementById(`mobileToday_${this.inputId}`);
+
+        if (dayInput && monthInput && yearInput) {
+            // Автоматическое обновление значения при вводе
+            const updateDate = () => {
+                const day = dayInput.value.padStart(2, '0');
+                const month = monthInput.value.padStart(2, '0');
+                const year = yearInput.value;
+                
+                if (day && month && year) {
+                    const dateString = `${year}-${month}-${day}`;
+                    const input = document.getElementById(this.inputId);
+                    if (input) {
+                        input.value = dateString;
+                        // Триггерим событие изменения
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            };
+
+            dayInput.addEventListener('input', updateDate);
+            monthInput.addEventListener('input', updateDate);
+            yearInput.addEventListener('input', updateDate);
+
+            // Валидация ввода
+            dayInput.addEventListener('blur', () => {
+                let value = parseInt(dayInput.value);
+                if (value < 1) dayInput.value = 1;
+                if (value > 31) dayInput.value = 31;
+                updateDate();
+            });
+
+            monthInput.addEventListener('blur', () => {
+                let value = parseInt(monthInput.value);
+                if (value < 1) monthInput.value = 1;
+                if (value > 12) monthInput.value = 12;
+                updateDate();
+            });
+
+            yearInput.addEventListener('blur', () => {
+                let value = parseInt(yearInput.value);
+                if (value < 2020) yearInput.value = 2020;
+                if (value > 2030) yearInput.value = 2030;
+                updateDate();
+            });
+        }
+
+        if (todayBtn) {
+            todayBtn.addEventListener('click', () => {
+                const today = new Date();
+                const dayInput = document.getElementById(`mobileDay_${this.inputId}`);
+                const monthInput = document.getElementById(`mobileMonth_${this.inputId}`);
+                const yearInput = document.getElementById(`mobileYear_${this.inputId}`);
+                
+                if (dayInput && monthInput && yearInput) {
+                    dayInput.value = today.getDate();
+                    monthInput.value = today.getMonth() + 1;
+                    yearInput.value = today.getFullYear();
+                    
+                    // Триггерим обновление
+                    dayInput.dispatchEvent(new Event('input'));
+                }
+            });
         }
     }
 
@@ -463,88 +454,26 @@ class Calendar {
         
         if (prevMonth) {
             prevMonth.addEventListener('click', () => this.navigateMonth(-1));
-            prevMonth.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.navigateMonth(-1);
-            });
         }
         
         if (nextMonth) {
             nextMonth.addEventListener('click', () => this.navigateMonth(1));
-            nextMonth.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.navigateMonth(1);
-            });
         }
 
         this.calendarDropdown?.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
-            const selectDayHandler = () => {
+            day.addEventListener('click', () => {
                 this.selectDay(parseInt(day.getAttribute('data-day')));
-            };
-            
-            day.addEventListener('click', selectDayHandler);
-            day.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                selectDayHandler();
             });
         });
 
         const todayBtn = this.calendarDropdown?.querySelector('#calendarToday');
         if (todayBtn) {
             todayBtn.addEventListener('click', () => this.selectToday());
-            todayBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.selectToday();
-            });
         }
 
         const selectBtn = this.calendarDropdown?.querySelector('#calendarSelect');
         if (selectBtn) {
             selectBtn.addEventListener('click', () => this.finalizeSelection());
-            selectBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.finalizeSelection();
-            });
-        }
-    }
-
-    attachMobileEvents() {
-        const todayBtn = this.calendarDropdown?.querySelector('#mobileDateToday');
-        if (todayBtn) {
-            todayBtn.addEventListener('click', () => this.selectToday());
-            todayBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.selectToday();
-            });
-        }
-
-        const selectBtn = this.calendarDropdown?.querySelector('#mobileDateSelect');
-        if (selectBtn) {
-            selectBtn.addEventListener('click', () => this.finalizeMobileSelection());
-            selectBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.finalizeMobileSelection();
-            });
-        }
-
-        // Валидация ввода для дня
-        const dayInput = this.calendarDropdown?.querySelector('#mobileDayInput');
-        if (dayInput) {
-            dayInput.addEventListener('input', (e) => {
-                let value = parseInt(e.target.value);
-                if (value < 1) e.target.value = 1;
-                if (value > 31) e.target.value = 31;
-            });
-        }
-
-        // Валидация ввода для года
-        const yearInput = this.calendarDropdown?.querySelector('#mobileYearInput');
-        if (yearInput) {
-            yearInput.addEventListener('input', (e) => {
-                let value = parseInt(e.target.value);
-                if (value < 2020) e.target.value = 2020;
-                if (value > 2030) e.target.value = 2030;
-            });
         }
     }
 
@@ -567,23 +496,10 @@ class Calendar {
 
     selectToday() {
         const today = new Date();
-        
-        if (this.isMobile) {
-            // Для мобильных обновляем значения в полях ввода
-            const dayInput = this.calendarDropdown?.querySelector('#mobileDayInput');
-            const monthInput = this.calendarDropdown?.querySelector('#mobileMonthInput');
-            const yearInput = this.calendarDropdown?.querySelector('#mobileYearInput');
-            
-            if (dayInput) dayInput.value = today.getDate();
-            if (monthInput) monthInput.value = today.getMonth() + 1;
-            if (yearInput) yearInput.value = today.getFullYear();
-        } else {
-            // Для десктопов используем старую логику
-            this.currentMonth = today.getMonth();
-            this.currentYear = today.getFullYear();
-            this.selectedDate = today;
-            this.updateCalendar();
-        }
+        this.currentMonth = today.getMonth();
+        this.currentYear = today.getFullYear();
+        this.selectedDate = today;
+        this.updateCalendar();
     }
 
     finalizeSelection() {
@@ -593,38 +509,11 @@ class Calendar {
         }
     }
 
-    finalizeMobileSelection() {
-        const dayInput = this.calendarDropdown?.querySelector('#mobileDayInput');
-        const monthInput = this.calendarDropdown?.querySelector('#mobileMonthInput');
-        const yearInput = this.calendarDropdown?.querySelector('#mobileYearInput');
-        
-        if (dayInput && monthInput && yearInput) {
-            const day = parseInt(dayInput.value);
-            const month = parseInt(monthInput.value) - 1;
-            const year = parseInt(yearInput.value);
-            
-            // Проверка валидности даты
-            const date = new Date(year, month, day);
-            if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
-                this.selectedDate = date;
-                this.setInputValue(date);
-                this.hideCalendar();
-            } else {
-                // Показываем ошибку для невалидной даты
-                const errorMessage = currentLanguage === 'kk' ? 
-                    'Қате күн!' : currentLanguage === 'ru' ? 
-                    'Неверная дата!' : 'Invalid date!';
-                showNotification(errorMessage, 'error');
-            }
-        }
-    }
-
     setInputValue(date) {
         const input = document.getElementById(this.inputId);
         if (input) {
             const formattedDate = this.formatDate(date);
             input.value = formattedDate;
-            
             input.dispatchEvent(new Event('change', { bubbles: true }));
         }
     }
@@ -636,32 +525,17 @@ class Calendar {
         return `${year}-${month}-${day}`;
     }
 
-    getFormattedDateForDisplay(dateString) {
-        if (!dateString) return '';
-        
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString;
-        
-        const formats = {
-            kk: {
-                day: date.getDate(),
-                month: ['Қаңтар', 'Ақпан', 'Наурыз', 'Сәуір', 'Мамыр', 'Маусым', 'Шілде', 'Тамыз', 'Қыркүйек', 'Қазан', 'Қараша', 'Желтоқсан'][date.getMonth()],
-                year: date.getFullYear()
-            },
-            ru: {
-                day: date.getDate(),
-                month: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'][date.getMonth()],
-                year: date.getFullYear()
-            },
-            en: {
-                day: date.getDate(),
-                month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()],
-                year: date.getFullYear()
-            }
-        };
-        
-        const format = formats[currentLanguage] || formats.kk;
-        return `${format.day} ${format.month} ${format.year}`;
+    updateCalendar() {
+        if (this.calendarDropdown && !this.isMobile) {
+            this.calendarDropdown.innerHTML = this.getDesktopCalendarHTML();
+            this.attachDesktopEvents();
+        }
+    }
+
+    hideCalendar() {
+        if (this.calendarDropdown) {
+            this.calendarDropdown.classList.remove('show');
+        }
     }
 }
 
@@ -700,16 +574,10 @@ function createLinkField(linkData = { title: '', url: '' }) {
     `;
     
     const removeBtn = linkField.querySelector('.remove-link-btn');
-    const removeLinkHandler = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    removeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         linkField.remove();
-    };
-    
-    removeBtn.addEventListener('click', removeLinkHandler);
-    removeBtn.addEventListener('touchstart', removeLinkHandler);
+    });
     
     return linkField;
 }
@@ -742,6 +610,109 @@ function getLinksFromForm(containerId) {
     return links;
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ МОБИЛЬНОГО МЕНЮ
+function setupMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const sidebar = document.getElementById('sidebar');
+
+    console.log('Setting up mobile menu...');
+
+    // Функция для открытия меню
+    const openMobileMenu = () => {
+        console.log('Opening mobile menu');
+        if (sidebar && mobileMenuOverlay) {
+            sidebar.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    // Функция для закрытия меню
+    const closeMobileMenu = () => {
+        console.log('Closing mobile menu');
+        if (sidebar && mobileMenuOverlay) {
+            sidebar.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Функция для переключения меню
+    const toggleMobileMenu = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        const isActive = sidebar.classList.contains('active');
+        console.log('Mobile menu toggle clicked. Current state:', isActive);
+        
+        if (isActive) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    };
+
+    // Обработчики для кнопки меню
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileMenuToggle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            toggleMobileMenu(e);
+        });
+        console.log('Mobile menu toggle event listeners added');
+    } else {
+        console.error('Mobile menu toggle button not found!');
+    }
+
+    // Обработчики для оверлея
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            closeMobileMenu();
+        });
+        console.log('Mobile menu overlay event listeners added');
+    } else {
+        console.error('Mobile menu overlay not found!');
+    }
+
+    // Закрытие меню при клике на пункт меню
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1024) {
+            if (e.target.closest('.menu-item') && sidebar && sidebar.classList.contains('active')) {
+                console.log('Closing menu on item click');
+                closeMobileMenu();
+            }
+        }
+    });
+
+    // Закрытие меню при нажатии Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Закрытие меню при изменении ориентации
+    window.addEventListener('orientationchange', () => {
+        if (sidebar && sidebar.classList.contains('active')) {
+            setTimeout(closeMobileMenu, 300);
+        }
+    });
+
+    // Автоматическое закрытие меню при увеличении ширины экрана
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024 && sidebar && sidebar.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    console.log('Mobile menu setup complete');
+}
+
 // Initialize main application
 function initializeMainApp() {
     console.log('Initializing main application...');
@@ -762,7 +733,7 @@ function initializeMainApp() {
     setupSidebar();
     setupTheme();
     setupLanguage();
-    setupMobileMenu();
+    setupMobileMenu(); // ИСПРАВЛЕННАЯ ФУНКЦИЯ
     setupLogout();
     loadPage('school');
     
@@ -809,137 +780,6 @@ function toggleAdminFeatures(isAdmin) {
     document.body.setAttribute('data-user-role', isAdmin ? 'admin' : 'user');
 }
 
-function setupMobileMenu() {
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-    const sidebar = document.getElementById('sidebar');
-    const themeToggleMobile = document.getElementById('themeToggleMobile');
-    const userBtnMobile = document.getElementById('userBtnMobile');
-
-    console.log('Setting up mobile menu...');
-
-    const toggleMobileMenu = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        console.log('Mobile menu toggle clicked');
-        if (sidebar && mobileMenuOverlay) {
-            const isActive = sidebar.classList.contains('active');
-            console.log('Current state:', isActive);
-            
-            sidebar.classList.toggle('active');
-            mobileMenuOverlay.classList.toggle('active');
-            document.body.style.overflow = !isActive ? 'hidden' : '';
-            
-            if (!isActive) {
-                sidebar.style.transform = 'translateX(0)';
-            } else {
-                setTimeout(() => {
-                    sidebar.style.transform = 'translateX(-100%)';
-                }, 300);
-            }
-            
-            console.log('New state:', sidebar.classList.contains('active'));
-        }
-    };
-
-    const closeMobileMenu = (e) => {
-        if (e) {
-            e.preventDefault();
-        }
-        console.log('Closing mobile menu');
-        if (sidebar && mobileMenuOverlay) {
-            sidebar.classList.remove('active');
-            mobileMenuOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            setTimeout(() => {
-                sidebar.style.transform = 'translateX(-100%)';
-            }, 300);
-        }
-    };
-
-    if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-        mobileMenuToggle.addEventListener('touchstart', toggleMobileMenu);
-        console.log('Mobile menu toggle event listeners added');
-    } else {
-        console.error('Mobile menu toggle button not found!');
-    }
-
-    if (mobileMenuOverlay) {
-        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
-        mobileMenuOverlay.addEventListener('touchstart', closeMobileMenu);
-        console.log('Mobile menu overlay event listeners added');
-    } else {
-        console.error('Mobile menu overlay not found!');
-    }
-
-    if (themeToggleMobile) {
-        const toggleThemeHandler = (e) => {
-            if (e) e.preventDefault();
-            toggleTheme();
-            closeMobileMenu();
-        };
-        
-        themeToggleMobile.addEventListener('click', toggleThemeHandler);
-        themeToggleMobile.addEventListener('touchstart', toggleThemeHandler);
-    }
-
-    if (userBtnMobile) {
-        const loadProfile = (e) => {
-            if (e) e.preventDefault();
-            loadPage('profile');
-            closeMobileMenu();
-        };
-        
-        userBtnMobile.addEventListener('click', loadProfile);
-        userBtnMobile.addEventListener('touchstart', loadProfile);
-    }
-
-    const closeMenuOnItemClick = (e) => {
-        if (window.innerWidth <= 1024) {
-            if (e.target.closest('.menu-item') && sidebar && sidebar.classList.contains('active')) {
-                console.log('Closing menu on item click');
-                closeMobileMenu();
-            }
-        }
-    };
-
-    document.addEventListener('click', closeMenuOnItemClick);
-    document.addEventListener('touchstart', closeMenuOnItemClick);
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-
-    window.addEventListener('orientationchange', () => {
-        if (sidebar && sidebar.classList.contains('active')) {
-            setTimeout(closeMobileMenu, 300);
-        }
-    });
-
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 1024 && sidebar && sidebar.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-
-    const preventBodyScroll = (e) => {
-        if (sidebar && sidebar.classList.contains('active')) {
-            e.preventDefault();
-        }
-    };
-
-    document.addEventListener('touchmove', preventBodyScroll, { passive: false });
-    document.addEventListener('wheel', preventBodyScroll, { passive: false });
-
-    console.log('Mobile menu setup complete');
-}
-
 function setupSidebar() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
@@ -952,6 +792,7 @@ function setupSidebar() {
             }
             
             if (window.innerWidth <= 1024) {
+                // На мобильных используем мобильное меню
                 const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
                 if (mobileMenuOverlay) {
                     sidebar.classList.remove('active');
@@ -959,24 +800,17 @@ function setupSidebar() {
                     document.body.style.overflow = '';
                 }
             } else {
+                // На десктопе переключаем свернутое состояние
                 sidebarCollapsed = !sidebarCollapsed;
-                
-                sidebar.classList.add('animating');
-                
-                setTimeout(() => {
-                    sidebar.classList.toggle('collapsed', sidebarCollapsed);
-                    localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
-                    
-                    setTimeout(() => {
-                        sidebar.classList.remove('animating');
-                    }, 400);
-                }, 10);
+                sidebar.classList.toggle('collapsed', sidebarCollapsed);
+                localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
             }
         };
 
         sidebarToggle.addEventListener('click', toggleSidebar);
         sidebarToggle.addEventListener('touchstart', toggleSidebar);
         
+        // Адаптация для мобильных устройств
         window.addEventListener('resize', function() {
             if (window.innerWidth <= 1024) {
                 sidebar.classList.add('mobile');
@@ -991,6 +825,7 @@ function setupSidebar() {
             }
         });
 
+        // Инициализация состояния
         if (window.innerWidth <= 1024) {
             sidebar.classList.add('mobile');
             sidebar.style.transform = 'translateX(-100%)';
@@ -1008,11 +843,6 @@ function setupNavigation() {
             e.preventDefault();
             e.stopPropagation();
         }
-        
-        this.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            this.style.transform = '';
-        }, 150);
         
         menuItems.forEach(i => i.classList.remove('active'));
         this.classList.add('active');
@@ -1052,13 +882,10 @@ function setupTheme() {
     document.body.setAttribute('data-theme', savedTheme);
     
     if (themeToggle) {
-        const toggleThemeHandler = (e) => {
+        themeToggle.addEventListener('click', (e) => {
             if (e) e.preventDefault();
             toggleTheme();
-        };
-        
-        themeToggle.addEventListener('click', toggleThemeHandler);
-        themeToggle.addEventListener('touchstart', toggleThemeHandler);
+        });
     }
     
     console.log('Theme setup complete');
@@ -1106,7 +933,7 @@ function setupLanguage() {
         document.addEventListener('touchstart', closeLangDropdown);
 
         document.querySelectorAll('.lang-option').forEach(option => {
-            const handleLangSelect = (e) => {
+            option.addEventListener('click', (e) => {
                 if (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -1114,10 +941,7 @@ function setupLanguage() {
                 const lang = option.getAttribute('data-lang');
                 changeLanguage(lang);
                 langDropdown.classList.remove('show');
-            };
-            
-            option.addEventListener('click', handleLangSelect);
-            option.addEventListener('touchstart', handleLangSelect);
+            });
         });
     }
     
@@ -1429,7 +1253,7 @@ function showDetailModal(type, id) {
     });
 }
 
-// Page templates (остаются без изменений, как в предыдущем коде)
+// Page templates
 function getSchoolPage() {
     const t = currentLanguage === 'kk' ? {
         title: "IT Лицей туралы",
@@ -1745,7 +1569,7 @@ function getTeachersPage() {
                 </div>
             </div>
             <div class="teacher-details">
-                <p><strong>${t.exmerce}</strong> ${teacher.experience[currentLanguage] || teacher.experience['kk']}</p>
+                <p><strong>${t.experience}</strong> ${teacher.experience[currentLanguage] || teacher.experience['kk']}</p>
                 <p><strong>${t.degree}</strong> ${teacher.degree}</p>
                 <p><strong>Телефон:</strong> ${teacher.phone}</p>
                 ${teacher.email ? `<p><strong>Email:</strong> ${teacher.email}</p>` : ''}
@@ -2809,5 +2633,6 @@ window.formatDateForDisplay = formatDateForDisplay;
 window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
-console.log('Application initialized successfully!');
+console.log('Application initialized successfully!'); это полный код?
+
 

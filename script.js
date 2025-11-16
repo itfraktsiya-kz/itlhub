@@ -136,7 +136,7 @@ const teachersData = [
             en: "Mathematics"
         },
         phone: "+7 701 123 45 67",
-        email: "alia@itlyceum.edu.kz",
+        email: "",
         experience: {
             kk: "15 жыл",
             ru: "15 лет",
@@ -159,7 +159,7 @@ const teachersData = [
             en: "English Language"
         },
         phone: "+7 702 234 56 78",
-        email: "marat@itlyceum.edu.kz",
+        email: "",
         experience: {
             kk: "10 жыл",
             ru: "10 лет",
@@ -174,7 +174,6 @@ const teachersData = [
         image: null
     }
 ];
-
 // Students data  
 const studentsData = [
     {
@@ -188,9 +187,9 @@ const studentsData = [
         },
         score: "4.9",
         awards: {
-            kk: ["Бірінші орын", "Ең үздік код"],
-            ru: ["Первое место", "Лучший код"],
-            en: ["First Place", "Best Code"]
+            kk: ["IT олимпиадасы", "Бағдарламалау"],
+            ru: ["IT олимпиада", "Программирование"],
+            en: ["IT Olympiad", "Programming"]
         },
         image: null
     },
@@ -205,9 +204,9 @@ const studentsData = [
         },
         score: "4.8",
         awards: {
-            kk: ["Алтын медаль", "Ең үздік шешім"],
-            ru: ["Золотая медаль", "Лучшее решение"],
-            en: ["Gold Medal", "Best Solution"]
+            kk: ["Математика", "Логика"],
+            ru: ["Математика", "Логика"],
+            en: ["Mathematics", "Logic"]
         },
         image: null
     }
@@ -2863,6 +2862,7 @@ window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
 console.log('Application initialized successfully!');
+
 
 
 

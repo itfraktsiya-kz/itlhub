@@ -746,6 +746,13 @@ function getLinksFromForm(containerId) {
 function initializeMainApp() {
     console.log('Initializing main application...');
     
+    // Проверяем, загружены ли все элементы DOM
+    if (!document.getElementById('sidebar') || !document.getElementById('content')) {
+        console.error('Required DOM elements not found!');
+        setTimeout(initializeMainApp, 100);
+        return;
+    }
+    
     const sidebar = document.getElementById('sidebar');
     if (sidebar && sidebarCollapsed) {
         sidebar.classList.add('collapsed');
@@ -761,6 +768,19 @@ function initializeMainApp() {
     
     updateBreadcrumb('school');
     updateUserInterface();
+    
+    // Добавляем обработчик для изменения размера окна
+    window.addEventListener('resize', handleResize);
+    
+    console.log('Main application initialized successfully');
+}
+
+function handleResize() {
+    // Перезагружаем текущую страницу при изменении размера окна
+    const currentPage = document.querySelector('.menu-item.active')?.getAttribute('data-page');
+    if (currentPage) {
+        loadPage(currentPage);
+    }
 }
 
 function updateUserInterface() {
@@ -1177,7 +1197,10 @@ function changeLanguage(lang) {
 
 function loadPage(pageId) {
     const contentArea = document.getElementById('content');
-    if (!contentArea) return;
+    if (!contentArea) {
+        console.error('Content area not found!');
+        return;
+    }
     
     contentArea.style.opacity = '0';
     contentArea.style.transform = 'translateY(10px)';
@@ -1195,12 +1218,22 @@ function loadPage(pageId) {
         if (pageTemplates[pageId]) {
             contentArea.innerHTML = pageTemplates[pageId];
             
+            // Добавляем класс для мобильных устройств
+            if (window.innerWidth <= 768) {
+                contentArea.classList.add('mobile-view');
+            } else {
+                contentArea.classList.remove('mobile-view');
+            }
+            
             setTimeout(() => {
                 contentArea.style.opacity = '1';
                 contentArea.style.transform = 'translateY(0)';
             }, 50);
             
             initializePage(pageId);
+        } else {
+            console.error(`Page template for ${pageId} not found!`);
+            contentArea.innerHTML = '<div class="error-message">Page not found</div>';
         }
         
         console.log(`Loaded page: ${pageId}`);
@@ -1397,7 +1430,723 @@ function showDetailModal(type, id) {
 }
 
 // Page templates (остаются без изменений, как в предыдущем коде)
-// [Здесь должны быть функции getSchoolPage, getNewsPage, getTeachersPage, getStudentsPage, getEventsPage, getProfilePage]
+function getSchoolPage() {
+    const t = currentLanguage === 'kk' ? {
+        title: "IT Лицей туралы",
+        subtitle: "Біздің мектеп - болашақ IT мамандарын дайындау ордасы",
+        stats: "Негізгі көрсеткіштер",
+        students: "Оқушылар",
+        teachers: "Мұғалімдер",
+        classes: "Сыныптар", 
+        courses: "IT курстар",
+        about: "Мектеп туралы",
+        description: "IT Лицей - бұл заманауи білім беру орталығы, онда оқушылар IT саласындағы ең соңғы технологияларды меңгереді. Біз оқушыларға теориялық біліммен қатар практикалық дағдыларды да үйретеміз.",
+        features: "Біздің артықшылықтар",
+        feature1: "Тәжірибелі мұғалімдер",
+        feature2: "Заманауи зертханалар",
+        feature3: "IT бағыттары",
+        feature4: "Халықаралық бағдарламалар"
+    } : currentLanguage === 'ru' ? {
+        title: "О IT Лицее", 
+        subtitle: "Наша школа - центр подготовки будущих IT специалистов",
+        stats: "Основные показатели",
+        students: "Ученики",
+        teachers: "Учителя",
+        classes: "Классы",
+        courses: "IT курсы",
+        about: "О школе",
+        description: "IT Лицей - это современный образовательный центр, где ученики осваивают самые передовые технологии в IT сфере. Мы обучаем студентов не только теоретическим знаниям, но и практическим навыкам.",
+        features: "Наши преимущества",
+        feature1: "Опытные преподаватели",
+        feature2: "Современные лаборатории", 
+        feature3: "IT направления",
+        feature4: "Международные программы"
+    } : {
+        title: "About IT Lyceum",
+        subtitle: "Our school is a center for training future IT specialists", 
+        stats: "Key Statistics",
+        students: "Students",
+        teachers: "Teachers",
+        classes: "Classes",
+        courses: "IT Courses",
+        about: "About School",
+        description: "IT Lyceum is a modern educational center where students master the latest technologies in the IT field. We teach students not only theoretical knowledge but also practical skills.",
+        features: "Our Advantages",
+        feature1: "Experienced Teachers",
+        feature2: "Modern Laboratories",
+        feature3: "IT Directions", 
+        feature4: "International Programs"
+    };
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            <p class="page-subtitle">${t.subtitle}</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1,200</div>
+                    <div class="stat-label">${t.students}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">${t.teachers}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">36</div>
+                    <div class="stat-label">${t.classes}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">${t.courses}</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">${t.about}</h2>
+                <p>${t.description}</p>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">${t.features}</h2>
+                <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="feature-item" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                        <i class="fas fa-users" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">${t.feature1}</h3>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                        <i class="fas fa-flask" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">${t.feature2}</h3>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                        <i class="fas fa-laptop-code" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">${t.feature3}</h3>
+                    </div>
+                    <div class="feature-item" style="text-align: center; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                        <i class="fas fa-globe" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">${t.feature4}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getNewsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Admin';
+    
+    const t = currentLanguage === 'kk' ? {
+        title: "Жаңалықтар",
+        subtitle: "Соңғы жаңалықтар мен хабарламалар",
+        addNews: "Жаңалық қосу",
+        newsTitle: "Тақырып",
+        newsContent: "Мазмұны", 
+        newsDate: "Күні",
+        newsImage: "Сурет",
+        newsBanner: "Баннер",
+        addLink: "Сілтеме қосу",
+        cancel: "Болдырмау",
+        add: "Қосу",
+        noNews: "Әлі жаңалық жоқ",
+        readMore: "Толығырақ",
+        delete: "Жою"
+    } : currentLanguage === 'ru' ? {
+        title: "Новости",
+        subtitle: "Последние новости и объявления", 
+        addNews: "Добавить новость",
+        newsTitle: "Заголовок",
+        newsContent: "Содержание",
+        newsDate: "Дата",
+        newsImage: "Изображение",
+        newsBanner: "Баннер", 
+        addLink: "Добавить ссылку",
+        cancel: "Отмена",
+        add: "Добавить",
+        noNews: "Пока нет новостей",
+        readMore: "Подробнее",
+        delete: "Удалить"
+    } : {
+        title: "News",
+        subtitle: "Latest news and announcements",
+        addNews: "Add News", 
+        newsTitle: "Title",
+        newsContent: "Content",
+        newsDate: "Date",
+        newsImage: "Image",
+        newsBanner: "Banner",
+        addLink: "Add Link",
+        cancel: "Cancel",
+        add: "Add",
+        noNews: "No news yet",
+        readMore: "Read More", 
+        delete: "Delete"
+    };
+
+    let adminPanel = '';
+    if (isAdmin) {
+        adminPanel = `
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">${t.addNews}</h2>
+                    <button class="btn btn-primary" id="showNewsFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addNews}
+                    </button>
+                </div>
+                
+                <div class="card-body" id="newsFormPanel" style="display: none;">
+                    <form id="newsForm">
+                        <div class="form-group">
+                            <label>${t.newsTitle}</label>
+                            <input type="text" id="newsTitle" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>${t.newsContent}</label>
+                            <textarea id="newsContent" class="form-control" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>${t.newsDate}</label>
+                                <input type="text" id="newsDate" class="form-control calendar-input" readonly required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>${t.newsImage}</label>
+                                <input type="file" id="newsImageInput" class="form-control" accept="image/*">
+                                <div class="image-preview-container">
+                                    <img id="newsImagePreview" class="image-preview" style="display: none; max-width: 200px; margin-top: 0.5rem;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>${t.newsBanner}</label>
+                                <input type="file" id="newsBannerInput" class="form-control" accept="image/*">
+                                <div class="image-preview-container">
+                                    <img id="newsBannerPreview" class="image-preview" style="display: none; max-width: 200px; margin-top: 0.5rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Сілтемелер</label>
+                            <div id="newsLinksContainer"></div>
+                            <button type="button" class="btn btn-outline btn-sm" id="addNewsLinkBtn">
+                                <i class="fas fa-plus"></i>
+                                ${t.addLink}
+                            </button>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelNewsBtn">${t.cancel}</button>
+                            <button type="submit" class="btn btn-primary" id="addNewsBtn">${t.add}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+    }
+
+    let newsItems = '';
+    if (newsData.length > 0) {
+        newsItems = newsData.map(news => `
+            <div class="news-item">
+                <div class="news-date">${news.formattedDate?.[currentLanguage] || formatDateForDisplay(news.date)}</div>
+                <h3 class="news-title">${news.title?.[currentLanguage] || news.title?.['kk']}</h3>
+                <p class="news-excerpt">${(news.content?.[currentLanguage] || news.content?.['kk']).substring(0, 150)}...</p>
+                <div class="news-meta">
+                    <button class="btn btn-outline btn-sm read-more-btn" data-type="news" data-id="${news.id}">
+                        <i class="fas fa-eye"></i>
+                        ${t.readMore}
+                    </button>
+                    ${isAdmin ? `
+                        <button class="btn btn-danger btn-sm delete-btn" data-type="news" data-id="${news.id}">
+                            <i class="fas fa-trash"></i>
+                            ${t.delete}
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+    } else {
+        newsItems = `
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <h3 class="empty-state-title">${t.noNews}</h3>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            <p class="page-subtitle">${t.subtitle}</p>
+            
+            ${adminPanel}
+            
+            <div class="news-grid">
+                ${newsItems}
+            </div>
+        </div>
+    `;
+}
+
+function getTeachersPage() {
+    const t = currentLanguage === 'kk' ? {
+        title: "Мұғалімдер",
+        subtitle: "Біздің тәжірибелі мұғалімдер",
+        filterAll: "Барлығы",
+        filterMath: "Математика",
+        filterScience: "Ғылым",
+        filterLanguages: "Тілдер",
+        filterIT: "IT",
+        contact: "Байланысу",
+        experience: "Тәжірибе",
+        degree: "Дәреже"
+    } : currentLanguage === 'ru' ? {
+        title: "Учителя",
+        subtitle: "Наши опытные преподаватели",
+        filterAll: "Все",
+        filterMath: "Математика",
+        filterScience: "Наука", 
+        filterLanguages: "Языки",
+        filterIT: "IT",
+        contact: "Связаться",
+        experience: "Опыт",
+        degree: "Степень"
+    } : {
+        title: "Teachers",
+        subtitle: "Our experienced teachers",
+        filterAll: "All",
+        filterMath: "Mathematics", 
+        filterScience: "Science",
+        filterLanguages: "Languages",
+        filterIT: "IT",
+        contact: "Contact",
+        experience: "Experience",
+        degree: "Degree"
+    };
+
+    const teacherItems = teachersData.map(teacher => `
+        <div class="teacher-card" data-subject="${teacher.subject.en}">
+            <div class="teacher-header">
+                <div class="teacher-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: ${getRandomColor()}; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+                    ${getInitials(teacher.name)}
+                </div>
+                <div class="teacher-info">
+                    <h3 class="teacher-name">${teacher.name}</h3>
+                    <p class="teacher-subject">${teacher.subject[currentLanguage] || teacher.subject['kk']}</p>
+                </div>
+            </div>
+            <div class="teacher-details">
+                <p><strong>${t.exmerce}</strong> ${teacher.experience[currentLanguage] || teacher.experience['kk']}</p>
+                <p><strong>${t.degree}</strong> ${teacher.degree}</p>
+                <p><strong>Телефон:</strong> ${teacher.phone}</p>
+                ${teacher.email ? `<p><strong>Email:</strong> ${teacher.email}</p>` : ''}
+            </div>
+            <div class="teacher-bio">
+                <p>${teacher.bio[currentLanguage] || teacher.bio['kk']}</p>
+            </div>
+            <div class="teacher-actions">
+                <button class="btn btn-primary contact-teacher-btn" data-teacher="${teacher.name}">
+                    <i class="fas fa-envelope"></i>
+                    ${t.contact}
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            <p class="page-subtitle">${t.subtitle}</p>
+            
+            <div class="card">
+                <div class="filter-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-outline filter-btn active" data-subject="all">${t.filterAll}</button>
+                    <button class="btn btn-outline filter-btn" data-subject="Mathematics">${t.filterMath}</button>
+                    <button class="btn btn-outline filter-btn" data-subject="Science">${t.filterScience}</button>
+                    <button class="btn btn-outline filter-btn" data-subject="English Language">${t.filterLanguages}</button>
+                    <button class="btn btn-outline filter-btn" data-subject="IT">${t.filterIT}</button>
+                </div>
+            </div>
+            
+            <div class="teacher-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                ${teacherItems}
+            </div>
+        </div>
+    `;
+}
+
+function getStudentsPage() {
+    const t = currentLanguage === 'kk' ? {
+        title: "Оқушылар",
+        subtitle: "Біздің табысты оқушылар",
+        achievement: "Жетістік",
+        score: "GPA",
+        awards: "Марапаттар",
+        class: "Сынып"
+    } : currentLanguage === 'ru' ? {
+        title: "Ученики",
+        subtitle: "Наши успешные ученики",
+        achievement: "Достижение", 
+        score: "GPA",
+        awards: "Награды",
+        class: "Класс"
+    } : {
+        title: "Students",
+        subtitle: "Our successful students",
+        achievement: "Achievement",
+        score: "GPA", 
+        awards: "Awards",
+        class: "Class"
+    };
+
+    const studentItems = studentsData.map(student => `
+        <div class="student-card">
+            <div class="student-header">
+                <div class="student-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: ${getRandomColor()}; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+                    ${getInitials(student.name)}
+                </div>
+                <div class="student-info">
+                    <h3 class="student-name">${student.name}</h3>
+                    <p class="student-class">${t.class}: ${student.class}</p>
+                </div>
+            </div>
+            <div class="student-details">
+                <p><strong>${t.achievement}:</strong> ${student.achievement[currentLanguage] || student.achievement['kk']}</p>
+                <p><strong>${t.score}:</strong> ${student.score}</p>
+                <p><strong>${t.awards}:</strong> ${(student.awards[currentLanguage] || student.awards['kk']).join(', ')}</p>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            <p class="page-subtitle">${t.subtitle}</p>
+            
+            <div class="student-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                ${studentItems}
+            </div>
+        </div>
+    `;
+}
+
+function getEventsPage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    const isAdmin = currentUser?.role === 'Admin';
+    
+    const t = currentLanguage === 'kk' ? {
+        title: "Іс-шаралар",
+        subtitle: "Жуырдағы іс-шаралар",
+        addEvent: "Іс-шара қосу",
+        eventTitle: "Тақырып",
+        eventDescription: "Сипаттама",
+        eventDate: "Күні",
+        eventImage: "Сурет",
+        eventBanner: "Баннер",
+        addLink: "Сілтеме қосу",
+        cancel: "Болдырмау",
+        add: "Қосу",
+        participate: "Қатысу",
+        readMore: "Толығырақ",
+        delete: "Жою",
+        noEvents: "Әлі іс-шара жоқ"
+    } : currentLanguage === 'ru' ? {
+        title: "Мероприятия",
+        subtitle: "Предстоящие мероприятия",
+        addEvent: "Добавить мероприятие",
+        eventTitle: "Название",
+        eventDescription: "Описание",
+        eventDate: "Дата",
+        eventImage: "Изображение",
+        eventBanner: "Баннер",
+        addLink: "Добавить ссылку",
+        cancel: "Отмена",
+        add: "Добавить",
+        participate: "Участвовать",
+        readMore: "Подробнее",
+        delete: "Удалить",
+        noEvents: "Пока нет мероприятий"
+    } : {
+        title: "Events",
+        subtitle: "Upcoming events",
+        addEvent: "Add Event",
+        eventTitle: "Title",
+        eventDescription: "Description",
+        eventDate: "Date",
+        eventImage: "Image",
+        eventBanner: "Banner",
+        addLink: "Add Link",
+        cancel: "Cancel",
+        add: "Add",
+        participate: "Participate",
+        readMore: "Read More",
+        delete: "Delete",
+        noEvents: "No events yet"
+    };
+
+    let adminPanel = '';
+    if (isAdmin) {
+        adminPanel = `
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">${t.addEvent}</h2>
+                    <button class="btn btn-primary" id="showEventFormBtn">
+                        <i class="fas fa-plus"></i>
+                        ${t.addEvent}
+                    </button>
+                </div>
+                
+                <div class="card-body" id="eventFormPanel" style="display: none;">
+                    <form id="eventForm">
+                        <div class="form-group">
+                            <label>${t.eventTitle}</label>
+                            <input type="text" id="eventTitle" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>${t.eventDescription}</label>
+                            <textarea id="eventDescription" class="form-control" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>${t.eventDate}</label>
+                                <input type="text" id="eventDate" class="form-control calendar-input" readonly required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>${t.eventImage}</label>
+                                <input type="file" id="eventImageInput" class="form-control" accept="image/*">
+                                <div class="image-preview-container">
+                                    <img id="eventImagePreview" class="image-preview" style="display: none; max-width: 200px; margin-top: 0.5rem;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>${t.eventBanner}</label>
+                                <input type="file" id="eventBannerInput" class="form-control" accept="image/*">
+                                <div class="image-preview-container">
+                                    <img id="eventBannerPreview" class="image-preview" style="display: none; max-width: 200px; margin-top: 0.5rem;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Сілтемелер</label>
+                            <div id="eventLinksContainer"></div>
+                            <button type="button" class="btn btn-outline btn-sm" id="addEventLinkBtn">
+                                <i class="fas fa-plus"></i>
+                                ${t.addLink}
+                            </button>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelEventBtn">${t.cancel}</button>
+                            <button type="submit" class="btn btn-primary" id="addEventBtn">${t.add}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+    }
+
+    let eventItems = '';
+    if (eventsData.length > 0) {
+        eventItems = eventsData.map(event => `
+            <div class="event-item">
+                <div class="event-date">${event.formattedDate?.[currentLanguage] || formatDateForDisplay(event.date)}</div>
+                <h3 class="event-title">${event.title?.[currentLanguage] || event.title?.['kk']}</h3>
+                <p class="event-description">${(event.description?.[currentLanguage] || event.description?.['kk']).substring(0, 150)}...</p>
+                <div class="event-meta">
+                    <button class="btn btn-primary btn-sm participate-event-btn" data-id="${event.id}">
+                        <i class="fas fa-user-plus"></i>
+                        ${t.participate}
+                    </button>
+                    <button class="btn btn-outline btn-sm read-more-btn" data-type="event" data-id="${event.id}">
+                        <i class="fas fa-eye"></i>
+                        ${t.readMore}
+                    </button>
+                    ${isAdmin ? `
+                        <button class="btn btn-danger btn-sm delete-btn" data-type="event" data-id="${event.id}">
+                            <i class="fas fa-trash"></i>
+                            ${t.delete}
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+    } else {
+        eventItems = `
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 class="empty-state-title">${t.noEvents}</h3>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            <p class="page-subtitle">${t.subtitle}</p>
+            
+            ${adminPanel}
+            
+            <div class="events-grid">
+                ${eventItems}
+            </div>
+        </div>
+    `;
+}
+
+function getProfilePage() {
+    const currentUser = window.authSystem?.getCurrentUser();
+    
+    const t = currentLanguage === 'kk' ? {
+        title: "Жеке кабинет",
+        personalInfo: "Жеке ақпарат",
+        fullName: "Толық аты-жөні",
+        login: "Логин",
+        class: "Сынып",
+        role: "Рөл",
+        changeRole: "Рөлді өзгерту",
+        security: "Қауіпсіздік",
+        currentPassword: "Қазіргі құпия сөз",
+        newPassword: "Жаңа құпия сөз",
+        confirmPassword: "Құпия сөзді растау",
+        changePassword: "Құпия сөзді өзгерту",
+        logout: "Жүйеден шығу",
+        admin: "Әкімші",
+        teacher: "Мұғалім",
+        student: "Оқушы"
+    } : currentLanguage === 'ru' ? {
+        title: "Личный кабинет",
+        personalInfo: "Личная информация",
+        fullName: "Полное имя",
+        login: "Логин",
+        class: "Класс",
+        role: "Роль",
+        changeRole: "Изменить роль",
+        security: "Безопасность",
+        currentPassword: "Текущий пароль",
+        newPassword: "Новый пароль",
+        confirmPassword: "Подтвердите пароль",
+        changePassword: "Изменить пароль",
+        logout: "Выйти из системы",
+        admin: "Администратор",
+        teacher: "Учитель",
+        student: "Ученик"
+    } : {
+        title: "Profile",
+        personalInfo: "Personal Information",
+        fullName: "Full Name",
+        login: "Login",
+        class: "Class",
+        role: "Role",
+        changeRole: "Change Role",
+        security: "Security",
+        currentPassword: "Current Password",
+        newPassword: "New Password",
+        confirmPassword: "Confirm Password",
+        changePassword: "Change Password",
+        logout: "Logout",
+        admin: "Admin",
+        teacher: "Teacher",
+        student: "Student"
+    };
+
+    const roleTranslations = {
+        'Admin': t.admin,
+        'Мұғалім': t.teacher,
+        'Оқушы': t.student
+    };
+
+    return `
+        <div class="page-content">
+            <h1 class="page-title">${t.title}</h1>
+            
+            <div class="card">
+                <h2 class="card-title">${t.personalInfo}</h2>
+                <div class="profile-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="profile-avatar" style="width: 100px; height: 100px; border-radius: 50%; background: ${getRandomColor()}; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 2rem;">
+                        ${getInitials(currentUser?.fullName)}
+                    </div>
+                    <div class="profile-info">
+                        <h3 style="margin-bottom: 0.5rem;">${currentUser?.fullName || 'Пайдаланушы'}</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">${t.login}: ${currentUser?.login || 'N/A'}</p>
+                        <p style="color: var(--text-secondary); margin-bottom: 0.25rem;">${t.class}: ${currentUser?.class || 'N/A'}</p>
+                        <p style="color: var(--text-secondary);">${t.role}: ${roleTranslations[currentUser?.role] || currentUser?.role}</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>${t.fullName}</label>
+                    <input type="text" class="form-control" value="${currentUser?.fullName || ''}" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>${t.login}</label>
+                    <input type="text" class="form-control" value="${currentUser?.login || ''}" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>${t.class}</label>
+                    <input type="text" class="form-control" value="${currentUser?.class || ''}" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-outline select-role-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        ${t.changeRole}
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">${t.security}</h2>
+                
+                <div class="form-group">
+                    <label>${t.currentPassword}</label>
+                    <input type="password" id="currentPassword" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>${t.newPassword}</label>
+                    <input type="password" id="newPassword" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>${t.confirmPassword}</label>
+                    <input type="password" id="confirmPassword" class="form-control">
+                </div>
+                
+                <button class="btn btn-primary" id="changePasswordBtn">
+                    <i class="fas fa-key"></i>
+                    ${t.changePassword}
+                </button>
+            </div>
+            
+            <div class="card">
+                <button class="btn btn-danger btn-block" id="logoutBtnProfile">
+                    <i class="fas fa-sign-out-alt"></i>
+                    ${t.logout}
+                </button>
+            </div>
+        </div>
+    `;
+}
 
 // Event handlers
 function deleteNews(id) {
@@ -2060,4 +2809,5 @@ window.formatDateForDisplay = formatDateForDisplay;
 window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
-console.log('Application initialized successfully!'); 
+console.log('Application initialized successfully!');
+

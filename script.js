@@ -2849,38 +2849,6 @@ function initializeProfilePage() {
         changePasswordBtn.addEventListener('touchstart', handlePasswordChange);
     }
 }
-// Force show sidebar toggle button
-function fixSidebarToggle() {
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    
-    if (sidebarToggle) {
-        sidebarToggle.style.display = 'flex';
-        sidebarToggle.style.visibility = 'visible';
-        sidebarToggle.style.opacity = '1';
-        sidebarToggle.style.pointerEvents = 'all';
-    }
-    
-    if (mobileMenuToggle) {
-        mobileMenuToggle.style.display = 'flex';
-        mobileMenuToggle.style.visibility = 'visible';
-        mobileMenuToggle.style.opacity = '1';
-        mobileMenuToggle.style.pointerEvents = 'all';
-    }
-}
-
-// Call on page load and after DOM changes
-document.addEventListener('DOMContentLoaded', fixSidebarToggle);
-window.addEventListener('load', fixSidebarToggle);
-
-// Also call when the main app initializes
-const originalInitializeMainApp = window.initializeMainApp;
-window.initializeMainApp = function() {
-    if (originalInitializeMainApp) {
-        originalInitializeMainApp();
-    }
-    setTimeout(fixSidebarToggle, 100);
-};
 // Make functions globally available
 window.deleteNews = deleteNews;
 window.deleteEvent = deleteEvent;
@@ -2895,5 +2863,6 @@ window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
 console.log('Application initialized successfully!');
+
 
 

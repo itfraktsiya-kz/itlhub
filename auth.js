@@ -9,7 +9,7 @@ class AuthSystem {
     init() {
         this.checkAuthState();
         this.setupEventListeners();
-        console.log('🔐 Auth system initialized');
+        console.log(' Auth system initialized');
     }
 
     setupEventListeners() {
@@ -179,12 +179,12 @@ class AuthSystem {
             }
         }, 1000);
         
-        // Initialize main app if function exists
-        if (typeof initializeMainApp === 'function') {
-            setTimeout(() => {
+        // Initialize main app immediately after showing main app
+        setTimeout(() => {
+            if (typeof initializeMainApp === 'function') {
                 initializeMainApp();
-            }, 100);
-        }
+            }
+        }, 100);
     }
 
     showRegisterForm() {
@@ -251,21 +251,21 @@ class AuthSystem {
                 login: 'mansur_erzhigit_7',
                 password: 'mans27',
                 fullName: 'Ержігіт Мансур',
-                role: 'Адмін',
+                role: 'Admin',
                 class: ''
             },
             {
                 login: 'alzhanova_aybibi_3',
                 password: 'aybibi06',
                 fullName: 'Альжанова Айбиби',
-                role: 'Адмін',
+                role: 'Admin',
                 class: ''
             },
             {
                 login: 'bulat_abilmansur_8',
                 password: 'abil21',
                 fullName: 'Булат Әбілмансур',
-                role: 'Адмін',
+                role: 'Admin',
                 class: ''
             },
             {
@@ -462,3 +462,22 @@ window.addEventListener('load', function() {
         }, 1000);
     }
 });
+
+// Make initializeMainApp globally available
+window.initializeMainApp = function() {
+    console.log('Initializing main application...');
+    
+    // Initialize all main app functionality
+    if (typeof setupNavigation === 'function') setupNavigation();
+    if (typeof setupSidebar === 'function') setupSidebar();
+    if (typeof setupTheme === 'function') setupTheme();
+    if (typeof setupLanguage === 'function') setupLanguage();
+    if (typeof setupMobileMenu === 'function') setupMobileMenu();
+    if (typeof updateUserInterface === 'function') updateUserInterface();
+    
+    // Load initial page
+    if (typeof loadPage === 'function') loadPage('school');
+    if (typeof updateBreadcrumb === 'function') updateBreadcrumb('school');
+    
+    console.log('Main application initialized successfully!');
+};

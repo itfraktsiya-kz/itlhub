@@ -606,7 +606,7 @@ function updateUserInterface() {
     if (userAvatar) userAvatar.textContent = getInitials(currentUser.fullName);
     if (userAvatarMobile) userAvatarMobile.textContent = getInitials(currentUser.fullName);
     
-    toggleAdminFeatures(currentUser.role === 'Адмін');
+    toggleAdminFeatures(currentUser.role === 'Admin');
 }
 
 function toggleAdminFeatures(isAdmin) {
@@ -1324,7 +1324,7 @@ function getSchoolPage() {
 
 function getNewsPage() {
     const currentUser = window.authSystem?.getCurrentUser();
-    const isAdmin = currentUser?.role === 'Адмін';
+    const isAdmin = currentUser?.role === 'Admin';
 
     const translations = {
         kk: {
@@ -1771,7 +1771,7 @@ function getStudentsPage() {
 
 function getEventsPage() {
     const currentUser = window.authSystem?.getCurrentUser();
-    const isAdmin = currentUser?.role === 'Адмін';
+    const isAdmin = currentUser?.role === 'Admin';
 
     const translations = {
         kk: {
@@ -2088,7 +2088,7 @@ function getProfilePage() {
         if (!user) return '';
         
         const roleContents = {
-            'Адмін': `
+            'Admin': `
                 <div class="card role-info-card">
                     <h3 class="card-title">${t.adminPanel}</h3>
                     <p>${t.adminFeatures}</p>
@@ -2286,7 +2286,7 @@ function initializePage(pageId) {
 
 function initializeNewsPage() {
     const currentUser = window.authSystem?.getCurrentUser();
-    const isAdmin = currentUser?.role === 'Адмін';
+    const isAdmin = currentUser?.role === 'Admin';
     
     const newsDateInput = document.getElementById('newsDate');
     if (newsDateInput) {
@@ -2531,7 +2531,7 @@ function initializeTeachersPage() {
 
 function initializeEventsPage() {
     const currentUser = window.authSystem?.getCurrentUser();
-    const isAdmin = currentUser?.role === 'Адмін';
+    const isAdmin = currentUser?.role === 'Admin';
     
     const eventDateInput = document.getElementById('eventDate');
     if (eventDateInput) {
@@ -2753,7 +2753,7 @@ function initializeProfilePage() {
         const handleRoleSelect = (e) => {
             if (e) e.preventDefault();
             
-            const roles = ['Адмін', 'Мұғалім', 'Оқушы'];
+            const roles = ['Admin', 'Мұғалім', 'Оқушы'];
             const currentRole = currentUser?.role;
             const currentIndex = roles.indexOf(currentRole);
             const nextRole = roles[(currentIndex + 1) % roles.length];
@@ -2864,6 +2864,3 @@ window.createLinkField = createLinkField;
 window.getLinksFromForm = getLinksFromForm;
 
 console.log('Application initialized successfully!');
-document.head.appendChild(modalStyles);
-
-

@@ -823,7 +823,7 @@ function showNotification(message, type = 'success') {
 }
 
 function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
@@ -2489,6 +2489,7 @@ modalStyles.textContent = `
         opacity: 0;
         transition: opacity 0.3s ease;
         padding: 1rem;
+        backdrop-filter: blur(5px);
     }
 
     .modal-overlay.show {
@@ -2506,6 +2507,7 @@ modalStyles.textContent = `
         transform: scale(0.9);
         transition: transform 0.3s ease;
         border: 1px solid var(--border);
+        backdrop-filter: blur(10px);
     }
 
     .modal-overlay.show .modal-content {
@@ -2543,6 +2545,7 @@ modalStyles.textContent = `
         cursor: pointer;
         font-size: 1.25rem;
         transition: background 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .modal-close:hover {
@@ -2724,4 +2727,3 @@ modalStyles.textContent = `
     }
 `;
 document.head.appendChild(modalStyles);
-

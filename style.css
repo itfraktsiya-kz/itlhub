@@ -122,11 +122,11 @@ body {
 
 .auth-container {
     background: var(--bg-card);
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
     width: 100%;
-    max-width: 440px;
+    max-width: 400px;
     border: 1px solid var(--border);
     transform: translateY(20px);
     opacity: 0;
@@ -175,10 +175,6 @@ body {
     top: 2px;
 }
 
-.logo:hover .logo-icon img {
-    transform: scale(1.05);
-}
-
 .auth-header h2 {
     color: var(--text-primary);
     font-size: 1.5rem;
@@ -207,8 +203,9 @@ body {
     border-radius: var(--radius);
     background: var(--bg-primary);
     color: var(--text-primary);
-    font-size: 1rem;
+    font-size: 16px; /* Prevent zoom on iOS */
     transition: var(--transition);
+    -webkit-appearance: none; /* Remove iOS shadow */
 }
 
 .form-input:focus {
@@ -258,6 +255,8 @@ body {
     gap: 0.5rem;
     position: relative;
     overflow: hidden;
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px; /* Touch target size */
 }
 
 .btn::before {
@@ -393,25 +392,35 @@ body {
     padding: 1rem;
     z-index: 90;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
+    height: 60px;
 }
 
 .mobile-menu-toggle {
     background: none;
     border: none;
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
     position: relative;
     cursor: pointer;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--bg-tertiary);
 }
 
 .mobile-menu-toggle span {
     display: block;
-    width: 100%;
+    width: 20px;
     height: 2px;
     background: var(--text-primary);
-    margin: 4px 0;
+    margin: 3px 0;
     transition: var(--transition);
     border-radius: 2px;
 }
@@ -422,12 +431,51 @@ body {
     gap: 0.5rem;
     font-weight: 600;
     color: var(--text-primary);
+    font-size: 1.1rem;
 }
 
 .mobile-logo img {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+.mobile-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-control-btn {
+    background: none;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: var(--transition);
+    font-size: 1.1rem;
+}
+
+.mobile-control-btn:hover {
+    background: var(--bg-tertiary);
+}
+
+.user-avatar-mobile {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
 }
 
 .mobile-menu-overlay {
@@ -456,6 +504,7 @@ body {
     z-index: 100;
     box-shadow: var(--shadow-md);
     transform: translateX(0);
+    overflow-y: auto;
 }
 
 .sidebar.collapsed {
@@ -488,31 +537,36 @@ body {
 .sidebar-toggle {
     background: none;
     border: none;
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
     position: relative;
     cursor: pointer;
     padding: 0;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .sidebar-toggle:hover {
     transform: scale(1.1);
+    background: var(--bg-tertiary);
 }
 
 .sidebar-toggle span {
     display: block;
-    width: 100%;
+    width: 20px;
     height: 2px;
     background: var(--text-primary);
-    margin: 4px 0;
+    margin: 3px 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 2px;
     transform-origin: center;
 }
 
 .sidebar.collapsed .sidebar-toggle span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(4px, 4px);
 }
 
 .sidebar.collapsed .sidebar-toggle span:nth-child(2) {
@@ -520,7 +574,7 @@ body {
 }
 
 .sidebar.collapsed .sidebar-toggle span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
+    transform: rotate(-45deg) translate(6px, -5px);
 }
 
 .sidebar-menu {
@@ -529,7 +583,7 @@ body {
 }
 
 .menu-item {
-    padding: 0.875rem 1.5rem;
+    padding: 1rem 1.5rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 4px solid transparent;
@@ -540,6 +594,7 @@ body {
     border-radius: var(--radius);
     position: relative;
     overflow: hidden;
+    min-height: 52px;
 }
 
 .menu-item::before {
@@ -590,6 +645,7 @@ body {
     opacity: 1;
     width: auto;
     white-space: nowrap;
+    font-size: 1rem;
 }
 
 .sidebar.collapsed .menu-text {
@@ -623,10 +679,11 @@ body {
     position: sticky;
     top: 0;
     z-index: 50;
+    height: 80px;
 }
 
 .breadcrumb .page-name {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -648,6 +705,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .header-btn:hover {
@@ -738,6 +797,7 @@ body {
 .lang-toggle {
     gap: 0.5rem;
     min-width: 80px;
+    padding: 0.75rem 1rem;
 }
 
 .lang-arrow {
@@ -788,6 +848,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    min-height: 44px;
 }
 
 .lang-option:hover {
@@ -807,11 +868,12 @@ body {
 .user-btn {
     gap: 0.75rem;
     padding: 0.5rem 1rem;
+    min-width: auto;
 }
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-radius: 50%;
     display: flex;
@@ -824,6 +886,7 @@ body {
 
 .user-name {
     font-weight: 500;
+    font-size: 0.95rem;
 }
 
 /* Page transition animations */
@@ -1115,6 +1178,7 @@ body {
     transition: var(--transition);
     font-size: 0.875rem;
     font-weight: 500;
+    min-height: 44px;
 }
 
 .filter-btn.active, .filter-btn:hover {
@@ -1239,6 +1303,7 @@ body {
     gap: 0.5rem;
     margin-top: 1rem;
     justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
 /* Delete Button */
@@ -1250,8 +1315,8 @@ body {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1339,11 +1404,18 @@ body {
     margin-left: 1rem;
     color: var(--text-secondary);
     transition: var(--transition);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
 .notification-close:hover {
     color: var(--text-primary);
     transform: scale(1.1);
+    background: var(--bg-tertiary);
 }
 
 @keyframes slideInRight {
@@ -1391,7 +1463,7 @@ body {
 
 /* Compact button styles */
 .btn-compact {
-    padding: 0.6rem 1rem !important;
+    padding: 0.75rem 1.25rem !important;
     font-size: 0.875rem !important;
     min-height: 40px !important;
 }
@@ -1410,13 +1482,14 @@ body {
     border: none;
     color: var(--primary);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.75rem;
     border-radius: var(--radius);
     transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    min-height: 44px;
 }
 
 .admin-panel-toggle:hover {
@@ -1514,6 +1587,11 @@ body {
     padding: 0.5rem;
     border-radius: var(--radius);
     transition: var(--transition);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .calendar-nav:hover {
@@ -1549,6 +1627,10 @@ body {
     transition: var(--transition);
     font-size: 0.875rem;
     color: var(--text-primary);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .calendar-day:hover {
@@ -1610,12 +1692,13 @@ body {
 }
 
 .role-badge {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
     margin-bottom: 1rem;
     display: inline-block;
+    min-height: 44px;
 }
 
 .role-selected {
@@ -1736,8 +1819,8 @@ body {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1827,11 +1910,11 @@ body {
     transform: translateY(-50%) !important;
     cursor: pointer !important;
     color: var(--text-tertiary) !important;
-    padding: 5px !important;
+    padding: 8px !important;
     border-radius: 4px !important;
     transition: all 0.2s ease !important;
-    width: 30px !important;
-    height: 30px !important;
+    width: 40px !important;
+    height: 40px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1849,13 +1932,13 @@ body {
 }
 
 .password-toggle i {
-    font-size: 0.875rem !important;
+    font-size: 1rem !important;
 }
 
 /* Adjust input padding for password fields */
 .input-group input[type="password"],
 .input-group input[type="text"] {
-    padding-right: 40px !important;
+    padding-right: 50px !important;
 }
 
 /* Auth switch links */
@@ -1879,27 +1962,34 @@ body {
     font-size: 0.875rem;
     text-decoration: underline;
     transition: color 0.2s ease;
+    padding: 0.5rem;
+    border-radius: 4px;
 }
 
 .link-btn:hover {
     color: var(--primary-dark);
+    background: var(--bg-tertiary);
 }
 
-/* Mobile responsive for password toggle */
-@media (max-width: 480px) {
-    .password-toggle {
-        right: 8px !important;
-        width: 28px !important;
-        height: 28px !important;
-    }
-    
-    .input-group input[type="password"],
-    .input-group input[type="text"] {
-        padding-right: 35px !important;
-    }
+/* Link fields styles */
+.link-field {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
 }
 
-/* Mobile-first responsive design */
+.link-field .form-input {
+    min-width: 120px;
+}
+
+.remove-link-btn {
+    white-space: nowrap;
+    min-height: 44px;
+}
+
+/* Mobile responsive design */
 @media (max-width: 1024px) {
     .mobile-header {
         display: flex;
@@ -1930,33 +2020,26 @@ body {
     }
 
     .header {
-        padding: 0.75rem 1rem;
-    }
-
-    .breadcrumb .page-name {
-        font-size: 1.1rem;
-    }
-
-    .user-name {
         display: none;
     }
 
-    .user-btn {
-        padding: 0.5rem;
+    .content {
+        padding: 1rem;
+        min-height: calc(100vh - 60px);
     }
 
-    .lang-toggle {
-        min-width: 60px;
-        padding: 0.5rem;
-    }
-
-    .theme-toggle {
-        width: 40px;
-        height: 40px;
+    .page-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
     }
 }
 
 @media (max-width: 768px) {
+    .auth-container {
+        padding: 1.5rem;
+        margin: 0.5rem;
+    }
+
     .admin-panel {
         padding: 1rem;
         margin-bottom: 1rem;
@@ -1984,28 +2067,6 @@ body {
     .form-actions {
         flex-direction: column;
         gap: 0.5rem;
-    }
-    
-    /* Mobile header improvements */
-    .header {
-        padding: 0.75rem 1rem;
-        flex-wrap: wrap;
-    }
-    
-    .header-left {
-        order: 1;
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .header-right {
-        order: 2;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .breadcrumb .page-name {
-        font-size: 1.1rem;
     }
     
     /* Mobile content improvements */
@@ -2128,6 +2189,30 @@ body {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
+
+    /* Link fields mobile */
+    .link-field {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .link-field .form-input {
+        min-width: 100%;
+    }
+
+    .remove-link-btn {
+        align-self: flex-end;
+    }
+
+    /* Card actions mobile */
+    .card-actions {
+        flex-direction: column;
+    }
+
+    .card-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2136,12 +2221,7 @@ body {
     }
     
     .auth-container {
-        padding: 1.5rem;
-        margin: 0.5rem;
-    }
-    
-    .header-right {
-        gap: 0.25rem;
+        padding: 1.25rem;
     }
     
     .card-actions {
@@ -2154,7 +2234,7 @@ body {
     }
     
     .filter-btn {
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
         font-size: 0.8rem;
     }
 
@@ -2164,6 +2244,18 @@ body {
 
     .content {
         padding: 0.75rem;
+    }
+
+    .mobile-logo span {
+        font-size: 1rem;
+    }
+
+    .mobile-controls {
+        gap: 0.25rem;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
     }
 }
 
@@ -2185,7 +2277,7 @@ body {
     /* Larger touch targets */
     .menu-item {
         padding: 1rem 1.5rem;
-        min-height: 44px;
+        min-height: 52px;
     }
     
     .btn {
@@ -2207,12 +2299,15 @@ body {
         align-items: center;
         justify-content: center;
     }
-}
 
-/* Improved mobile sidebar toggle */
-.sidebar-toggle, .mobile-menu-toggle {
-    min-width: 44px;
-    min-height: 44px;
+    /* Remove hover effects for touch devices */
+    .btn-animated:hover::before {
+        left: -100%;
+    }
+
+    .menu-item:hover::before {
+        left: -100%;
+    }
 }
 
 /* Better mobile forms */
@@ -2224,6 +2319,10 @@ body {
     .file-preview, .banner-preview {
         max-width: 100%;
     }
+
+    select.form-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
 }
 
 /* Mobile-first improvements for auth modal */
@@ -2233,7 +2332,7 @@ body {
     }
     
     .auth-container {
-        padding: 1.5rem 1rem;
+        padding: 1.25rem 1rem;
     }
     
     .demo-accounts {
@@ -2242,6 +2341,10 @@ body {
     
     .demo-item {
         font-size: 0.8rem;
+    }
+
+    .logo h2 {
+        font-size: 1.25rem;
     }
 }
 
@@ -2259,5 +2362,22 @@ body {
     .btn-compact {
         padding: 0.75rem 1.25rem;
         font-size: 0.9rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .mobile-header,
+    .sidebar,
+    .header {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+    }
+    
+    .content {
+        padding: 0;
     }
 }

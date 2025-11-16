@@ -99,6 +99,7 @@ class AuthSystem {
         toggleBtn.style.alignItems = 'center';
         toggleBtn.style.justifyContent = 'center';
         toggleBtn.style.zIndex = '2';
+        toggleBtn.style.webkitTapHighlightColor = 'transparent';
 
         // Add hover effect
         toggleBtn.addEventListener('mouseenter', () => {

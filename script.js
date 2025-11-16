@@ -549,6 +549,76 @@ class Calendar {
     }
 }
 
+// Функция для создания поля ссылки
+function createLinkField(linkData = { title: '', url: '' }) {
+    const t = currentLanguage === 'kk' ? {
+        linkTitle: "Сілтеме атауы",
+        linkUrl: "URL мекенжайы", 
+        removeLink: "Жою"
+    } : currentLanguage === 'ru' ? {
+        linkTitle: "Название ссылки",
+        linkUrl: "URL адрес",
+        removeLink: "Удалить"
+    } : {
+        linkTitle: "Link Title",
+        linkUrl: "URL Address", 
+        removeLink: "Remove"
+    };
+
+    const linkField = document.createElement('div');
+    linkField.className = 'link-field';
+    linkField.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;';
+    
+    linkField.innerHTML = `
+        <div style="flex: 1;">
+            <input type="text" class="form-input link-title-input" placeholder="${t.linkTitle}" 
+                   value="${linkData.title}" data-link-title>
+        </div>
+        <div style="flex: 2;">
+            <input type="url" class="form-input link-url-input" placeholder="https://example.com" 
+                   value="${linkData.url}" data-link-url>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm remove-link-btn" data-remove-link style="white-space: nowrap;">
+            <i class="fas fa-times"></i>
+            ${t.removeLink}
+        </button>
+    `;
+    
+    // Добавляем обработчик для удаления ссылки
+    const removeBtn = linkField.querySelector('.remove-link-btn');
+    removeBtn.addEventListener('click', function() {
+        linkField.remove();
+    });
+    
+    return linkField;
+}
+
+// Функция для получения данных ссылок из формы
+function getLinksFromForm(containerId) {
+    const links = [];
+    const linkFields = document.querySelectorAll(`#${containerId} .link-field`);
+    
+    linkFields.forEach(field => {
+        const titleInput = field.querySelector('[data-link-title]');
+        const urlInput = field.querySelector('[data-link-url]');
+        
+        if (titleInput.value.trim() && urlInput.value.trim()) {
+            // Проверяем валидность URL
+            let url = urlInput.value.trim();
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            
+            links.push({
+                title: titleInput.value.trim(),
+                url: url
+            });
+        }
+    });
+    
+    return links;
+}
+
 // Initialize main application
 function initializeMainApp() {
     console.log('🚀 Initializing main application...');
@@ -2154,51 +2224,6 @@ function contactTeacher(name) {
     showNotification(t, 'info');
 }
 
-// Функция для добавления полей ссылок
-function addLinkField(containerId, linkIndex = 0) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    const t = currentLanguage === 'kk' ? {
-        linkTitle: "Сілтеме атауы",
-        linkUrl: "URL мекенжайы",
-        removeLink: "Жою"
-    } : currentLanguage === 'ru' ? {
-        linkTitle: "Название ссылки",
-        linkUrl: "URL адрес",
-        removeLink: "Удалить"
-    } : {
-        linkTitle: "Link Title",
-        linkUrl: "URL Address",
-        removeLink: "Remove"
-    };
-    
-    const linkField = document.createElement('div');
-    linkField.className = 'link-field';
-    linkField.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;';
-    
-    linkField.innerHTML = `
-        <div style="flex: 1;">
-            <input type="text" class="form-input" placeholder="${t.linkTitle}" data-link-title>
-        </div>
-        <div style="flex: 2;">
-            <input type="url" class="form-input" placeholder="https://example.com" data-link-url>
-        </div>
-        <button type="button" class="btn btn-outline btn-sm" data-remove-link style="white-space: nowrap;">
-            <i class="fas fa-times"></i>
-            ${t.removeLink}
-        </button>
-    `;
-    
-    container.appendChild(linkField);
-    
-    // Добавляем обработчик для удаления ссылки
-    const removeBtn = linkField.querySelector('[data-remove-link]');
-    removeBtn.addEventListener('click', function() {
-        linkField.remove();
-    });
-}
-
 // Initialize page specific functionality
 function initializePage(pageId) {
     switch (pageId) {
@@ -2251,7 +2276,8 @@ function initializeNewsPage() {
         const addNewsLinkBtn = document.getElementById('addNewsLinkBtn');
         if (addNewsLinkBtn) {
             addNewsLinkBtn.addEventListener('click', function() {
-                addLinkField('newsLinksContainer');
+                const linkField = createLinkField();
+                document.getElementById('newsLinksContainer').appendChild(linkField);
             });
         }
         
@@ -2270,20 +2296,8 @@ function initializeNewsPage() {
                 const imageFile = newsImageInput.files[0];
                 const bannerFile = newsBannerInput.files[0];
                 
-                // Собираем ссылки
-                const links = [];
-                const linkFields = document.querySelectorAll('#newsLinksContainer .link-field');
-                linkFields.forEach(field => {
-                    const titleInput = field.querySelector('[data-link-title]');
-                    const urlInput = field.querySelector('[data-link-url]');
-                    
-                    if (titleInput.value.trim() && urlInput.value.trim()) {
-                        links.push({
-                            title: titleInput.value.trim(),
-                            url: urlInput.value.trim()
-                        });
-                    }
-                });
+                // Получаем ссылки из формы
+                const links = getLinksFromForm('newsLinksContainer');
                 
                 const t = currentLanguage === 'kk' ? {
                     allFields: "Барлық өрістерді толтырыңыз!",
@@ -2481,7 +2495,8 @@ function initializeEventsPage() {
         const addEventLinkBtn = document.getElementById('addEventLinkBtn');
         if (addEventLinkBtn) {
             addEventLinkBtn.addEventListener('click', function() {
-                addLinkField('eventLinksContainer');
+                const linkField = createLinkField();
+                document.getElementById('eventLinksContainer').appendChild(linkField);
             });
         }
         
@@ -2500,20 +2515,8 @@ function initializeEventsPage() {
                 const imageFile = eventImageInput.files[0];
                 const bannerFile = eventBannerInput.files[0];
                 
-                // Собираем ссылки
-                const links = [];
-                const linkFields = document.querySelectorAll('#eventLinksContainer .link-field');
-                linkFields.forEach(field => {
-                    const titleInput = field.querySelector('[data-link-title]');
-                    const urlInput = field.querySelector('[data-link-url]');
-                    
-                    if (titleInput.value.trim() && urlInput.value.trim()) {
-                        links.push({
-                            title: titleInput.value.trim(),
-                            url: urlInput.value.trim()
-                        });
-                    }
-                });
+                // Получаем ссылки из формы
+                const links = getLinksFromForm('eventLinksContainer');
                 
                 const t = currentLanguage === 'kk' ? {
                     allFields: "Барлық өрістерді толтырыңыз!",
@@ -2758,7 +2761,8 @@ window.changeLanguage = changeLanguage;
 window.initializeMainApp = initializeMainApp;
 window.showDetailModal = showDetailModal;
 window.formatDateForDisplay = formatDateForDisplay;
-window.addLinkField = addLinkField;
+window.createLinkField = createLinkField;
+window.getLinksFromForm = getLinksFromForm;
 
 console.log('🎉 Application initialized successfully!');
 
@@ -3015,4 +3019,3 @@ modalStyles.textContent = `
     }
 `;
 document.head.appendChild(modalStyles);
-

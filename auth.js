@@ -52,21 +52,21 @@ class AuthSystem {
     }
 
     setupPasswordVisibility() {
-        // For login form
-        const loginPasswordGroup = document.querySelector('.auth-form:first-of-type .input-group:nth-child(2)');
-        if (loginPasswordGroup) {
-            this.addPasswordToggle(loginPasswordGroup, 'passwordInput');
-        }
-
         // For registration form
-        const regPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(2)');
-        const regConfirmPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(3)');
+        const regPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(3)');
+        const regConfirmPasswordGroup = document.querySelector('#registerForm .input-group:nth-child(4)');
         
         if (regPasswordGroup) {
             this.addPasswordToggle(regPasswordGroup, 'regPassword');
         }
         if (regConfirmPasswordGroup) {
             this.addPasswordToggle(regConfirmPasswordGroup, 'regConfirmPassword');
+        }
+
+        // For login form
+        const loginPasswordGroup = document.querySelector('#loginForm .input-group:nth-child(2)');
+        if (loginPasswordGroup) {
+            this.addPasswordToggle(loginPasswordGroup, 'passwordInput');
         }
     }
 
@@ -150,6 +150,8 @@ class AuthSystem {
             this.showMainApp();
         } else {
             this.showAuthModal();
+            // Show registration form first by default
+            this.showRegisterForm();
         }
     }
 
@@ -188,7 +190,7 @@ class AuthSystem {
     }
 
     showRegisterForm() {
-        const loginForm = document.querySelector('.auth-form:first-of-type');
+        const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const authTitle = document.getElementById('authTitle');
         const loginBtnText = document.getElementById('loginBtnText');
@@ -200,7 +202,7 @@ class AuthSystem {
     }
 
     showLoginForm() {
-        const loginForm = document.querySelector('.auth-form:first-of-type');
+        const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const authTitle = document.getElementById('authTitle');
         const loginBtnText = document.getElementById('loginBtnText');
@@ -318,16 +320,16 @@ class AuthSystem {
         const regClass = document.getElementById('regClass');
         const registerBtn = document.getElementById('registerBtn');
 
-        if (!regLogin || !regPassword || !regConfirmPassword || !regFullName) return;
+        if (!regLogin || !regPassword || !regConfirmPassword || !regFullName || !regClass) return;
 
         const login = regLogin.value.trim();
         const password = regPassword.value.trim();
         const confirmPassword = regConfirmPassword.value.trim();
         const fullName = regFullName.value.trim();
-        const className = regClass ? regClass.value : '';
+        const className = regClass.value;
 
         // Validation
-        if (!login || !password || !confirmPassword || !fullName) {
+        if (!login || !password || !confirmPassword || !fullName || !className) {
             this.showNotification('Барлық өрістерді толтырыңыз!', 'error');
             return;
         }
@@ -365,16 +367,12 @@ class AuthSystem {
 
             this.showNotification('Сіз сәтті тіркелдіңіз! Енді жүйеге кіре аласыз.', 'success');
             
-            // Switch to login form
-            setTimeout(() => {
-                this.showLoginForm();
-                // Clear form
-                regLogin.value = '';
-                regPassword.value = '';
-                regConfirmPassword.value = '';
-                regFullName.value = '';
-                if (regClass) regClass.value = '';
-            }, 2000);
+            // Auto login after registration
+            this.currentUser = newUser;
+            this.isAuthenticated = true;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            
+            this.showMainApp();
 
         } catch (error) {
             this.showNotification('Тіркеу кезінде қате пайда болды', 'error');
@@ -481,3 +479,4 @@ window.initializeMainApp = function() {
     
     console.log('Main application initialized successfully!');
 };
+

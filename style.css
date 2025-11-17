@@ -2430,6 +2430,69 @@ a:focus-visible {
         margin-top: 1rem;
     }
 }
+/* Стили для мобильного ввода даты */
+.mobile-date-container {
+    margin-top: 1rem;
 }
+
+.mobile-date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.date-input-group {
+    flex: 1;
+    text-align: center;
+}
+
+.date-input-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.mobile-date-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 16px;
+}
+
+.date-separator {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-top: 1.2rem;
+}
+
+.mobile-date-today {
+    width: 100%;
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 360px) {
+    .mobile-date-inputs {
+        gap: 0.25rem;
+    }
+    
+    .mobile-date-input {
+        padding: 0.5rem;
+        font-size: 14px;
+    }
+    
+    .date-separator {
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+}
+
+}
+
 
 

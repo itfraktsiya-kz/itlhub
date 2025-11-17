@@ -2491,8 +2491,110 @@ a:focus-visible {
         margin-top: 1rem;
     }
 }
+/* ... Ваш существующий CSS выше ... */
 
+/* ======================================= */
+/* ===== 📱 АДАПТИВНОСТЬ (MOBILE FIRST) ===== */
+/* ======================================= */
+
+/* Скрыть десктопный шапку и показать мобильный шапку */
+@media (max-width: 1200px) {
+    .header {
+        display: none; /* Скрыть десктопную шапку */
+    }
+
+    .mobile-header {
+        display: flex; /* Показать мобильную шапку */
+    }
 }
+
+/* Настройки для экранов меньше 1024px */
+@media (max-width: 1024px) {
+    /* Скрыть сайдбар по умолчанию на мобильных устройствах */
+    .sidebar {
+        transform: translateX(-280px);
+        box-shadow: none;
+    }
+
+    /* Когда сайдбар активен на мобильном */
+    .sidebar.active {
+        transform: translateX(0);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    /* Сбросить левый отступ для основного контента */
+    .main-content {
+        margin-left: 0;
+        padding-top: 60px; /* Учитываем высоту мобильной шапки */
+    }
+
+    /* Удалить влияние collapsed класса на мобильных устройствах */
+    .sidebar.collapsed ~ .main-content {
+        margin-left: 0;
+    }
+    
+    /* Уменьшение отступов основного контента */
+    .content {
+        padding: 1rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+    
+    /* Адаптация сетки для мобильных устройств */
+    .news-grid, .events-grid {
+        grid-template-columns: 1fr; /* Одна колонка на мобильном */
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem; /* Уменьшаем размер заголовка */
+        margin-bottom: 1.5rem;
+    }
+
+    /* Скрыть кнопку сворачивания сайдбара на мобильных */
+    .sidebar-toggle {
+        display: none;
+    }
+    
+    .sidebar-header {
+        justify-content: center; /* Центрируем логотип */
+    }
+    
+    .sidebar-header .logo h2 {
+        display: none; /* Скрываем текст "IT Lyceum" на мобильной панели */
+    }
+    
+    .sidebar-header {
+        padding: 1rem;
+    }
+    
+    .logo {
+        gap: 0.5rem;
+    }
+    
+    /* Сделать модальное окно на весь экран для удобства на телефоне */
+    .auth-container {
+        border-radius: 0;
+        max-width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+}
+
+/* Стили для маленьких мобильных экранов (меньше 640px) */
+@media (max-width: 640px) {
+    .auth-container {
+        padding: 1rem;
+    }
+    
+    .auth-header {
+        margin-bottom: 1rem;
+    }
+}
+}
+
 
 
 
